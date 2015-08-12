@@ -1,0 +1,25 @@
+Real
+Complex
+vec<Real,2>			== R2
+vec<Complex,4>		== C4
+
+makeVecR(...)
+makeVecC(...)
+
+makeVecR(1,2,3,4)
+
+	// nur als Funktionsparameter:
+r1field
+c1field
+rvecfield<3>
+cvecfield<2>
+
+r1field f;
+
+f(x)		// f ... Field
+			// x ... vec<Real,3>
+			
+v[i]		// v .. vec<T,n>
+			// 1 <= i <= n
+
+irgendeintyp FunktionsName (vec<Real,3> x, ...) 

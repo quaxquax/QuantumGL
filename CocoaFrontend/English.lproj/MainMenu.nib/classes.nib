@@ -1,0 +1,92 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                abortRendering = id; 
+                chooseAnimation = id; 
+                dlgBrowse = id; 
+                dlgCancel = id; 
+                dlgGo = id; 
+                dlgUpdateNrOfFrames = id; 
+                exportAnimation = id; 
+                openAnimationPalette = id; 
+                playPause = id; 
+                subrangeMatrixAction = id; 
+                valueChanged = id; 
+            }; 
+            CLASS = AnimationController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                animationMenu = id; 
+                animationPalette = id; 
+                animationPopup = id; 
+                dlgAnimationMenu = id; 
+                dlgAnimationPopup = id; 
+                dlgFrom = id; 
+                dlgHeight = id; 
+                dlgOutputName = id; 
+                dlgOutputPath = id; 
+                dlgPanel = id; 
+                dlgSubrangeMatrix = id; 
+                dlgTo = id; 
+                dlgTotal = id; 
+                dlgWidth = id; 
+                frameNumberFormatter = id; 
+                frameTextField = id; 
+                newFolderAccessory = NSView; 
+                newFolderButton = NSButton; 
+                playPauseButton = id; 
+                positionSlider = id; 
+                progressBar = id; 
+                progressMessage = id; 
+                progressWindow = id; 
+                stepperButtons = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = HackedSlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
+        {
+            ACTIONS = {copy = id; }; 
+            CLASS = QGLVariableTableView; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSTableView; 
+        }, 
+        {
+            CLASS = QuantumApplication; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {aboutBox = NSPanel; }; 
+            SUPERCLASS = NSApplication; 
+        }, 
+        {
+            ACTIONS = {exportImage = id; selectAndOpenDescriptionFile = id; showHelp = id; }; 
+            CLASS = QuantumController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                animationController = id; 
+                exportSavePanelAASlider = id; 
+                exportSavePanelAAStaticText = id; 
+                exportSavePanelHeight = id; 
+                exportSavePanelView = id; 
+                exportSavePanelWidth = id; 
+                oglView = id; 
+                oglWindow = id; 
+                progressBar = id; 
+                progressMessage = id; 
+                progressPanel = id; 
+                varPanel = id; 
+                varTable = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = QuantumView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
+        {
+            ACTIONS = {showVariablesWindow = id; sliderMoved = id; }; 
+            CLASS = VarWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {tableView = NSTableView; valueSlider = id; varWindow = NSPanel; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

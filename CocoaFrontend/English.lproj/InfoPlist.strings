@@ -1,0 +1,5 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleName = "QuantumGL";
+CFBundleShortVersionString = "QuantumGL 1.0";
+CFBundleGetInfoString = "QuantumGL 1.0";

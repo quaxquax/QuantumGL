@@ -1,0 +1,2 @@
+#include "win32api/qMenu.rc"
+#include "win32api/qDialog.rc"

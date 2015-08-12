@@ -1,0 +1,9 @@
+memory-management polyci:
+
+for RefenceCounted objects
+
+reference count starts at 1 on creation
+delete is allowed if refCount == 0 or refCount == 1
+
+Function Arguments always remain property of caller
+

@@ -1,0 +1,26 @@
+How to build QuantumGL:
+
+*** Mac OS X version:
+Open QuantumGL.pbproj in Xcode, and just build it :-).
+If you modify the parser or lexer (quantum.y or quantum.l),
+fire up a Terminal and run 'make parser'.
+
+Required Libraries: Nothing that isn't included with Mac OS X.
+
+*** Windows version:
+The included Makefile is written for a mingw32 cross compiler running on Mac OS X or Linux; it's probably easier to just download Mingw32 for Windows from www.mingw.org and modify the Makefile (just remove the mingw32- prefixes from the commands).
+Once you've set up your compiler, issue the command:
+
+make -f Makefile.mingw
+
+Libraries you need to install: libz libpng
+
+*** GLUT/X11-based minimal frontend on any UNIX platform:
+
+make -f Makefile.x11
+
+Required Libraries: X11 with OpenGL support, glut (or freeglut).
+
+---
+
+If you have any questions, ask them at wolfgang.thaller@gmx.net.

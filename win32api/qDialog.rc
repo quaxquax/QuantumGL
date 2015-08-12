@@ -1,0 +1,72 @@
+/*!
+	\file		qMenu.rc
+	\author		Roman Weinberger
+	\date		15-11-2002
+	
+	dialogs resource script
+*/
+#include <windows.h>
+#include "qDialog.h"
+
+qDialog DIALOG /*DISCARDABLE*/ 0, 0, 0, 0
+STYLE WS_VISIBLE|WS_POPUP|NOT WS_BORDER
+FONT 8, "MS Sans Serif"
+{
+    LISTBOX     IDC_VARIABLE_LIST, 2, 5, 123, 80, LBS_SORT |
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+                    
+    EDITTEXT        IDC_VARIABLE_EDIT,2,106,30,12,ES_AUTOHSCROLL
+    
+    CONTROL     "Slider1", IDC_VARIABLE_SLIDER, "msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,32,106,95,12
+    
+    LTEXT       "Working: ", 666, 2, 132, 30, 12
+    EDITTEXT    IDC_PROGRESS_OUT, 32, 132, 123, 12, ES_READONLY | NOT WS_BORDER
+    
+    CONTROL     "Progress1",IDC_PROGRESS_BAR,"msctls_progress32",PBS_SMOOTH,
+                    2,146,126,12
+
+    LTEXT       "Animation: ", IDC_ANI, 2, 175, 34, 12
+    EDITTEXT    IDC_VIDEO_NUM, 35, 175, 30, 12, ES_READONLY | NOT WS_BORDER
+    
+    LTEXT       "Frame: ", IDC_FRM, 66, 175, 30, 12
+    EDITTEXT    IDC_VIDEO_FRAME, 90, 175, 30, 12, ES_READONLY | NOT WS_BORDER
+    
+    PUSHBUTTON  "Play", IDC_VIDEO_PLAY, 2, 193, 10, 10, BS_BITMAP
+    
+    PUSHBUTTON  "Pause", IDC_VIDEO_PAUSE, 14, 193, 10, 10, BS_BITMAP
+    
+    PUSHBUTTON  "Stop", IDC_VIDEO_STOP, 26, 193, 10, 10, BS_BITMAP
+    
+    CONTROL     "Slider2", IDC_VIDEO_SLIDER, "msctls_trackbar32", TBS_TOP | 
+                    TBS_AUTOTICKS | WS_TABSTOP, 40, 186, 87, 19
+            
+    PUSHBUTTON  "Prev Animation", IDC_PREV_ANI, 2, 208, 60, 10
+    
+    PUSHBUTTON  "Next Animation", IDC_NEXT_ANI, 64, 208, 61, 10
+}
+
+qFileDialog DIALOG DISCARDABLE  CW_USEDEFAULT, CW_USEDEFAULT, 194, 167
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Select Export Properties"
+FONT 8, "MS Sans Serif"
+{
+    DEFPUSHBUTTON   "OK",IDOK,45,146,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,103,146,50,14
+    EDITTEXT        IDC_EXPORTNAME,17,39,133,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_EXPORTNAME_CHOOSE,157,39,18,11
+    GROUPBOX        "Export Name",666,7,15,180,56
+    GROUPBOX        "File Properties",666,7,80,180,54
+    LTEXT           "Width in Pixels",666,29,94,47,8, ES_NUMBER
+    LTEXT           "Height in Pixels",666,29,113,49,8, ES_NUMBER
+    EDITTEXT        IDC_EXPORT_WIDTH,84,93,48,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EXPORT_HEIGHT,84,112,48,12,ES_AUTOHSCROLL
+}
+
+100    ICON DISCARDABLE "win32api/app.ico"
+
+IDC_BITMAP_PLAY         BITMAP      "win32api/play.bmp"
+IDC_BITMAP_PAUSE        BITMAP      "win32api/pause.bmp"
+IDC_BITMAP_STOP         BITMAP      "win32api/stop.bmp"
+

@@ -1,0 +1,95 @@
+SRCS=\
+	AbsEvaluator.cp\
+	Animator.cp\
+	AutoreleasePool.cp\
+	BSPTree.cp\
+	CalculationStage.cp\
+	CommonEvaluator.cp\
+	CubeEdges.cp\
+	CubeInfo.cp\
+	CutToEvaluator.cp\
+	DefinedField.cp\
+	ExplicitPointList.cp\
+	ExpressionEvaluator.cp\
+	Expressions.cp\
+	Flow.cp\
+	FieldExpressions.cp\
+	FieldFunction.cp\
+	FieldFunctions/CoulombFunctions.cp\
+	FieldFunctions/FieldFunctionRegistry.cp\
+	FieldFunctions/Hydrogen553.cp\
+	FieldFunctions/StdFieldFunctions.cp\
+	GridPointList.cp\
+	ImageExporter.stub.cp\
+	IsoSurface.cp\
+	lex.yy.cp\
+	quantum.tab.cp\
+	QuantumDescription.cp\
+	ReadEvaluator.cp\
+	RealVariable.cp\
+	ReferenceCounted.cp\
+	ScaleToEvaluator.cp\
+	Slice.cp\
+	StandardFunctions.cp\
+	ValueEvaluator.cp\
+	ValueExpressions.cp\
+	Vectors.cp\
+	VisualObject.cp\
+	ZoomEvaluator.cp\
+	QuantumGL.cp\
+	QuantumGLUT.cp
+
+
+OBJS=$(SRCS:%.cp=%.o)
+DEPS=$(SRCS:%.cp=%.d)
+
+COPTS= -I. -g -frtti -O3
+LIBS= -L/usr/X11R6/lib/ -lglut -lGLU -lGL -lX11 -lXi -lXext -lXmu -lm
+
+#printo:
+#	echo $(OBJS)
+#printd:
+#	echo $(DEPS)
+
+all:	qugel
+
+
+parser:	quantum.tab.cp lex.yy.cp quantum.tab.h
+		
+quantum.tab.h quantum.tab.cp: quantum.y
+		bison -d quantum.y
+		mv quantum.tab.c quantum.tab.cp
+
+lex.yy.cp: quantum.l
+		flex quantum.l
+		mv lex.yy.c lex.yy.cp
+		
+		
+qugel:	$(OBJS)
+		g++ -g -o qugel $(OBJS) $(LIBS)
+
+#clean:
+#		rm -f *.o
+#		rm -f FieldFunctions/*.o
+#		rm -f *.d
+#		rm -f FieldFunctions/*.d
+#		rm -f qugel
+
+clean:
+		rm -f $(OBJS)
+		rm -f $(DEPS)
+		rm -f depend
+		rm -f qugel
+
+%.o:	%.cp
+		g++ -c $(COPTS) -o $@ $<
+		
+depend: $(DEPS)
+		cat $(DEPS) | sed s/\\.cp\\.o/.o/g > depend
+
+%.d:	%.cp
+		echo -n $< > $@
+		g++ -MM $(COPTS) $< | sed s/.*\\.o/.o/ >> $@ 
+
+
+include depend

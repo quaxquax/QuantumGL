@@ -1,0 +1,30 @@
+/*!
+	\file		qMenu.rc
+	\author		Roman Weinberger
+	\date		15-11-2002
+	
+	menu resource script
+*/
+#include "qMenu.h"
+
+qMenu MENU
+{
+    POPUP "&File"
+    {
+        MENUITEM "&Open", IDM_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "&Exit", IDM_FILE_EXIT
+    }
+    POPUP "&Export"
+    {
+        MENUITEM "Export &Image", IDM_EXPORT_BACKBUFFER
+        MENUITEM SEPARATOR
+        MENUITEM "Export &Current Animation", IDM_EXPORT_CURRENT_ANIMATION
+        MENUITEM "Export &All Animations", IDM_EXPORT_ALL_ANIMATIONS
+    }
+    /*POPUP "&Settings"
+    {
+        MENUITEM "Set &Multiframe Mode", IDM_SETTINGS_MULTI
+        MENUITEM "Set &Singleframe Mode", IDM_SETTINGS_SINGLE
+    }*/
+}
