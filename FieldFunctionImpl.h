@@ -143,16 +143,39 @@ public:
 #define FF_REAL_CALL(n)		FF_REAL_CALL_ ## n
 */
 
-#define FF_COMMENT_IF_ZERO_0(x)
-#define FF_COMMENT_IF_ZERO_1(x)		x
-#define FF_COMMENT_IF_ZERO_2(x)		x
-#define FF_COMMENT_IF_ZERO_3(x)		x
-#define FF_COMMENT_IF_ZERO_4(x)		x
-#define FF_COMMENT_IF_ZERO_5(x)		x
-#define FF_COMMENT_IF_ZERO_6(x)		x
-#define FF_COMMENT_IF_ZERO_7(x)		x
+#define COMMA_FF_COMMENT_IF_ZERO_0(x)
+#define COMMA_FF_COMMENT_IF_ZERO_1(x)		,FieldArgList x
+#define COMMA_FF_COMMENT_IF_ZERO_2(x)		,FieldArgList x
+#define COMMA_FF_COMMENT_IF_ZERO_3(x)		,FieldArgList x
+#define COMMA_FF_COMMENT_IF_ZERO_4(x)		,FieldArgList x
+#define COMMA_FF_COMMENT_IF_ZERO_5(x)		,FieldArgList x
+#define COMMA_FF_COMMENT_IF_ZERO_6(x)		,FieldArgList x
+#define COMMA_FF_COMMENT_IF_ZERO_7(x)		,FieldArgList x
+	
+#define COMMA_FF_COMMENT_IF_ZERO(n,x)		COMMA_FF_COMMENT_IF_ZERO_ ## n(x)
+	
 
+#define FF_COMMENT_IF_ZERO_0(x)
+#define FF_COMMENT_IF_ZERO_1(x)		FieldArgList x
+#define FF_COMMENT_IF_ZERO_2(x)		FieldArgList x
+#define FF_COMMENT_IF_ZERO_3(x)		FieldArgList x
+#define FF_COMMENT_IF_ZERO_4(x)		FieldArgList x
+#define FF_COMMENT_IF_ZERO_5(x)		FieldArgList x
+#define FF_COMMENT_IF_ZERO_6(x)		FieldArgList x
+#define FF_COMMENT_IF_ZERO_7(x)		FieldArgList x
+					
 #define FF_COMMENT_IF_ZERO(n,x)		FF_COMMENT_IF_ZERO_ ## n(x)
+
+#define FF_FA_COMMENT_IF_ZERO_0(x)
+#define FF_FA_COMMENT_IF_ZERO_1(x)		x,
+#define FF_FA_COMMENT_IF_ZERO_2(x)		x,
+#define FF_FA_COMMENT_IF_ZERO_3(x)		x,
+#define FF_FA_COMMENT_IF_ZERO_4(x)		x,
+#define FF_FA_COMMENT_IF_ZERO_5(x)		x,
+#define FF_FA_COMMENT_IF_ZERO_6(x)		x,
+#define FF_FA_COMMENT_IF_ZERO_7(x)		x,
+
+#define FF_FA_COMMENT_IF_ZERO(n,x)		FF_FA_COMMENT_IF_ZERO_ ## n(x)
 
 
 #define DECLARE_ARGUMENT_ADAPTOR(n)														\
@@ -168,11 +191,11 @@ public:
 																						\
 		inline int getN() { return n; }													\
 																						\
-		inline void precalculate(	FieldArgList FF_COMMENT_IF_ZERO(n,fa)) { }			\
+		inline void precalculate(	FF_COMMENT_IF_ZERO(n,fa)) { }			\
 		inline void invalidate()	{ }													\
 																						\
-		inline Ret operator() (vecR3 pos, 												\
-								FieldArgList FF_COMMENT_IF_ZERO(n,fa))					\
+		inline Ret operator() (vecR3 pos 												\
+				       ,FieldArgList fa)	\
 		{																				\
 			return (*f)(makeVecR(pos.x,pos.y,pos.z) FF_FIELD_CALL(n));					\
 		}																				\
@@ -212,7 +235,7 @@ DECLARE_ARGUMENT_ADAPTOR(7)
 																						\
 		inline int getN() { return n; }													\
 																						\
-		void precalculate(		FieldArgList FF_COMMENT_IF_ZERO(n,fa))					\
+		void precalculate(		FF_COMMENT_IF_ZERO(n,fa))					\
 		{																				\
 			if(data) delete data;														\
 			data = new Data();															\
@@ -224,10 +247,10 @@ DECLARE_ARGUMENT_ADAPTOR(7)
 			data = NULL;																\
 		}																				\
 																						\
-		inline Ret operator() (vecR3 pos, 												\
-								FieldArgList FF_COMMENT_IF_ZERO(n,fa))					\
+		inline Ret operator() (vecR3 pos 												\
+				       ,FieldArgList  fa)				\
 		{																				\
-			if(!data) precalculate(fa,rva);												\
+			if(!data) precalculate(fa);												\
 			return (*f)(makeVecR(pos.x,pos.y,pos.z), *data								\
 						FF_FIELD_CALL(n));												\
 		}																				\
@@ -256,7 +279,7 @@ template <class T> class FFTypeInfo
 public:
 };
 
-class FFTypeInfo<Real>
+template<> class FFTypeInfo<Real>
 {
 public:
 	inline static bool IsComplex()	{ return false; }
@@ -266,7 +289,7 @@ public:
 	inline static Real*	NumberPointer(Real& r) { return &r; }
 };
 
-class FFTypeInfo<Complex>
+template<> class FFTypeInfo<Complex>
 {
 public:
 	inline static bool IsComplex()	{ return true; }
@@ -376,6 +399,54 @@ class AdaptedEvaluator : public CommonAdaptedEvaluator<ArgAdaptor>
 template <class ArgAdaptor>
 class AdaptedEvaluator<ArgAdaptor, Real> : public CommonAdaptedEvaluator<ArgAdaptor>
 {
+  // HD - init function, fun variable was not defined in scope
+protected:
+  bool	c;
+  int		n;
+	
+  ArgAdaptor		fun;
+  FieldArgList	fArgs;
+  int				nFArgs;
+  // HD - retType was not defined in this scope
+  typedef typename ArgAdaptor::return_type retType;
+  typedef FFTypeInfo<retType>	info;
+  void			init(ArgAdaptor	adaptor,
+			     const vector<CommonEvaluator*>& fieldArgs)
+  {
+    fun = adaptor;
+    c = info::IsComplex();
+    n = info::Dimensions();
+    Range	xRange, yRange, zRange;				
+    int i;
+    nFArgs = fieldArgs.size();
+
+    xRange = yRange = zRange = fullRange;
+    if(nFArgs)
+      {
+							
+	for(i=0;i<nFArgs;i++)
+	  {
+	    fArgs[i] = retain(fieldArgs[i]);
+
+	    if(ExpressionEvaluator* field = dynamic_cast<ExpressionEvaluator*>(fieldArgs[i]))
+	      {
+		Range xr, yr, zr;
+		field->GetRanges(xr,yr,zr);
+		if(xRange == fullRange)
+		  xRange = xr, yRange = yr, zRange = zr;
+		else if(xr == fullRange)
+		  ;
+		else
+		  if(xr != xRange || yr != yRange || zr != zRange)
+		    {
+		      /*throw RangeMismatch(xRange,yRange,zRange,
+			xr,yr,zr);*/
+		      assert(false);//###
+		    }
+	      }
+	  }
+      }
+  }
 public:
 					AdaptedEvaluator(
 							ArgAdaptor	adaptor,
@@ -391,8 +462,8 @@ public:
 			
 		retType& ret = *((retType*)values);
 										// ###! relies on layout of vec<>
-		if(!IsEvaluationCached())
-			fun.invalidate(), SetEvaluationCached();
+		if(!CommonEvaluator::IsEvaluationCached())
+			fun.invalidate(), CommonEvaluator::SetEvaluationCached();
 		ret = fun(pos,fArgs);
 	}
 };
@@ -401,11 +472,12 @@ template <class ArgAdaptor>
 class AdaptedEvaluator<ArgAdaptor, Complex> : public CommonAdaptedEvaluator<ArgAdaptor>
 {
 public:
+  	typedef typename ArgAdaptor::return_type retType;
 					AdaptedEvaluator(
 							ArgAdaptor	adaptor,
 							const vector<CommonEvaluator*>& fieldArgs)
 					{
-						init(adaptor, fieldArgs);
+						this->init(adaptor, fieldArgs);
 					}
 
 	virtual void 	EvaluateComplex(vecR3 pos, int n, complex<number> values[])
@@ -415,9 +487,9 @@ public:
 			
 		retType& ret = *((retType*)values);
 										// ###! relies on layout of vec<>
-		if(!IsEvaluationCached())
-			fun.invalidate(), SetEvaluationCached();
-		ret = fun(pos,fArgs);
+		if(!CommonEvaluator::IsEvaluationCached())
+			this->fun.invalidate(), CommonEvaluator::SetEvaluationCached();
+		ret = this->fun(pos,this->fArgs);
 	}
 };
 

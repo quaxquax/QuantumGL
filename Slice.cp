@@ -6,6 +6,7 @@
 
 #include GL_GL_H
 #include GL_GLU_H
+#include <stdio.h> // To make printf work.
 
 extern Range worldXRange, worldYRange, worldZRange;
 

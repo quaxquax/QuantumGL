@@ -9,6 +9,10 @@
 
 #include <algorithm>
 #include <functional>
+
+// HD -Addition
+// http://www.cs.swarthmore.edu/wikis/G++_errors/doku.php
+#include<cstdio>
 					
 Flow::Flow()
 	: thePointList(NULL), theData(NULL),  
