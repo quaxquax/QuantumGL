@@ -43,8 +43,8 @@ SRCS=\
 OBJS=$(SRCS:%.cp=%.o)
 DEPS=$(SRCS:%.cp=%.d)
 
-COPTS= -I. -g -frtti -fpermissive
-LIBS= -L/usr/X11R6/lib/ -lglut -lGLU -lGL -lX11 -lXi -lXext -lXmu -lm  -pthread
+COPTS= -I. -g -frtti -fpermissive -std=c++11 -fPIE
+LIBS= -L/usr/X11R6/lib/ -lglut -lGLU -lGL -lX11 -lXi -lXext -lXmu -lm  -pthread -pie
 
 #printo:
 #	echo $(OBJS)
@@ -92,4 +92,4 @@ depend: $(DEPS)
 		clang++ -MM $(COPTS) $< | sed s/.*\\.o/.o/ >> $@ 
 
 
-include depend
+#include depend
