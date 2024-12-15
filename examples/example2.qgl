@@ -1,0 +1,28 @@
+
+// Transition between hydrogen states 100 and 211 //
+
+fovy := 25;
+latitude := 20;
+longitude := 17;
+
+variable cn := 1;
+variable cl := 1;
+variable cm := 0;
+variable a [0,1] := 0;
+
+/*
+field theData resolution 64 := sqrt(1. - a*a)*CoulombFunctionT(1,0,0,1,100*a) + a*CoulombFunctionT(2, 1,0,1,100*a)
+cut_to [-12,12] scaled_to [-1,1];
+*/
+field theData resolution 64 := sqrt(1. - a*a)*CoulombFunctionT(1,0,0,1,100*a) + a*CoulombFunctionT(2, 1,1,1,100*a)
+cut_to [-12,12] scaled_to [-1,1];
+
+field absData := abs(theData);
+
+variable iso1:=0.006;
+variable iso2:=0.03;
+
+isosurface absData at iso1 color argcolor(theData) transparency 0.7 shininess 50;
+isosurface absData at iso2 color argcolor(theData) shininess 50;
+
+animate a from 0 to 1 inclusive in 100 frames;
