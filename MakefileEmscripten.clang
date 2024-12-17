@@ -1,0 +1,77 @@
+# Emscripten Compiler
+CXX = emcc
+
+# Compilation Flags
+COPTS = -I. -g -frtti -fpermissive
+
+EMSCRIPTEN_OPTS = \
+    -s WASM=1 \
+    -s FULL_ES2=1 \
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -s TOTAL_MEMORY=512MB \
+    -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' \
+    --use-port=sdl2 \
+    -s USE_SDL=2
+
+SRCS=\
+	AbsEvaluator.cp\
+	Animator.cp\
+	AutoreleasePool.cp\
+	BSPTree.cp\
+	CalculationStage.cp\
+	CommonEvaluator.cp\
+	CubeEdges.cp\
+	CubeInfo.cp\
+	CutToEvaluator.cp\
+	DefinedField.cp\
+	ExplicitPointList.cp\
+	ExpressionEvaluator.cp\
+	Expressions.cp\
+	Flow.cp\
+	FieldExpressions.cp\
+	FieldFunction.cp\
+	FieldFunctions/CoulombFunctions.cp\
+	FieldFunctions/FieldFunctionRegistry.cp\
+	FieldFunctions/Hydrogen553.cp\
+	FieldFunctions/StdFieldFunctions.cp\
+	GridPointList.cp\
+	ImageExporter.stub.cp\
+	IsoSurface.cp\
+	lex.yy.cp\
+	quantum.tab.cp\
+	QuantumDescription.cp\
+	ReadEvaluator.cp\
+	RealVariable.cp\
+	ReferenceCounted.cp\
+	ScaleToEvaluator.cp\
+	Slice.cp\
+	StandardFunctions.cp\
+	ValueEvaluator.cp\
+	ValueExpressions.cp\
+	Vectors.cp\
+	VisualObject.cp\
+	ZoomEvaluator.cp\
+	QuantumGL.cp\
+	QuantumGLUT.cp
+
+OBJS=$(SRCS:%.cp=%.o)
+
+# Target
+all:	qugel.html
+
+# Emscripten compilation rule
+qugel.html: $(OBJS)
+	$(CXX) $(COPTS) $(EMSCRIPTEN_OPTS) \
+	-o $@ $(OBJS) \
+	-s EXPORTED_FUNCTIONS='["_main"]'
+
+# Compilation rule for source files
+%.o: %.cp
+	$(CXX) $(COPTS) $(EMSCRIPTEN_OPTS) -c -o $@ $
+
+clean:
+	rm -f $(OBJS)
+	rm -f qugel.html
+	rm -f qugel.js
+	rm -f qugel.wasm
+
