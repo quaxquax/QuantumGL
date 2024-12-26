@@ -1,5 +1,3 @@
-#include <GL/gl.h>
-
 #include "Slice.h"
 
 #include "ExpressionEvaluator.h"

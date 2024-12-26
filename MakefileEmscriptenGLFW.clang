@@ -1,0 +1,87 @@
+# Emscripten Compiler
+CXX = emcc
+
+# Compilation Flags
+COPTS = -I. -g -frtti -fpermissive
+
+EMSCRIPTEN_OPTS = \
+    -I/Users/quax/projects/gl4es/include \
+    -L/Users/quax/projects/gl4es/lib \
+    -s WASM=1 \
+    -s MAX_WEBGL_VERSION=1 \
+    -s ALLOW_MEMORY_GROWTH=1 \
+    -s TOTAL_MEMORY=512MB \
+    -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' \
+    --use-port=sdl2 \
+    -s USE_SDL=2 \
+    -s USE_GLFW=3 \
+    -s GL_UNSAFE_OPTS=0 \
+    -s ASSERTIONS=1 \
+    -s GL_EMULATE_GLES_VERSION_STRING_FORMAT=1 \
+    -s LEGACY_GL_EMULATION=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
+    -ferror-limit=0 -std=c++11 -fPIE -lGL 
+
+SRCS=\
+	AbsEvaluator.cpp\
+	Animator.cpp\
+	AutoreleasePool.cpp\
+	BSPTree.cpp\
+	CalculationStage.cpp\
+	CommonEvaluator.cpp\
+	CubeEdges.cpp\
+	CubeInfo.cpp\
+	CutToEvaluator.cpp\
+	DefinedField.cpp\
+	ExplicitPointList.cpp\
+	ExpressionEvaluator.cpp\
+	Expressions.cpp\
+	Flow.cpp\
+	FieldExpressions.cpp\
+	FieldFunction.cpp\
+	FieldFunctions/CoulombFunctions.cpp\
+	FieldFunctions/FieldFunctionRegistry.cpp\
+	FieldFunctions/Hydrogen553.cpp\
+	FieldFunctions/StdFieldFunctions.cpp\
+	GridPointList.cpp\
+	ImageExporter.stub.cpp\
+	IsoSurface.cpp\
+	lex.yy.cpp\
+	quantum.tab.cpp\
+	QuantumDescription.cpp\
+	ReadEvaluator.cpp\
+	RealVariable.cpp\
+	ReferenceCounted.cpp\
+	ScaleToEvaluator.cpp\
+	Slice.cpp\
+	StandardFunctions.cpp\
+	ValueEvaluator.cpp\
+	ValueExpressions.cpp\
+	Vectors.cpp\
+	VisualObject.cpp\
+	ZoomEvaluator.cpp\
+	QuantumGL.cpp\
+	QuantumGLUT.cpp \
+	QuantumGLFW.cpp
+
+# Convert .cpp files to .o files, maintaining directory structure
+OBJS = $(SRCS:.cpp=.o)
+
+
+# Compilation rule for .cpp files
+%.o: %.cpp
+	@echo "Compiling: $<"
+	$(CXX) $(COPTS) $(EMSCRIPTEN_OPTS) -c $< -o $@ $
+
+# Main target
+qugel.html: $(OBJS)
+	$(CXX) $(COPTS) $(EMSCRIPTEN_OPTS) \
+	-o $@ $(OBJS) \
+	-s EXPORTED_FUNCTIONS='["_main"]'
+
+all: qugel.html
+
+clean:
+	rm -f $(OBJS)
+	rm -f qugel.html
+	rm -f qugel.js
+	rm -f qugel.wasm

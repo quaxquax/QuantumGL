@@ -1,3 +1,4 @@
+#include <GL/gl.h>
 #include "QuantumConfig.h"
 #include "QuantumFrontend.h"
 #include "QuantumProgress.h"
@@ -206,7 +207,9 @@ void ResizeDisplayTo(int w, int h)
 
 void SwapBuffers()
 {
-	glutSwapBuffers();
+	// glutSwapBuffers();
+	glFlush();
+	glFinish(); 
 }
 
 void PostRedisplay()
@@ -270,7 +273,7 @@ int main(int argc, char **argv)
 
 	cout << "Initializing OpenGL...\n";
 
-	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH);
 	glutCreateWindow("QuantumGL");
 	
 	glutDisplayFunc(display);

@@ -1,0 +1,96 @@
+SRCS=\
+	AbsEvaluator.cpp\
+	Animator.cpp\
+	AutoreleasePool.cpp\
+	BSPTree.cpp\
+	CalculationStage.cpp\
+	CommonEvaluator.cpp\
+	CubeEdges.cpp\
+	CubeInfo.cpp\
+	CutToEvaluator.cpp\
+	DefinedField.cpp\
+	ExplicitPointList.cpp\
+	ExpressionEvaluator.cpp\
+	Expressions.cpp\
+	Flow.cpp\
+	FieldExpressions.cpp\
+	FieldFunction.cpp\
+	FieldFunctions/CoulombFunctions.cpp\
+	FieldFunctions/FieldFunctionRegistry.cpp\
+	FieldFunctions/Hydrogen553.cpp\
+	FieldFunctions/StdFieldFunctions.cpp\
+	GridPointList.cpp\
+	ImageExporter.stub.cpp\
+	IsoSurface.cpp\
+	lex.yy.cpp\
+	quantum.tab.cpp\
+	QuantumDescription.cpp\
+	ReadEvaluator.cpp\
+	RealVariable.cpp\
+	ReferenceCounted.cpp\
+	ScaleToEvaluator.cpp\
+	Slice.cpp\
+	StandardFunctions.cpp\
+	ValueEvaluator.cpp\
+	ValueExpressions.cpp\
+	Vectors.cpp\
+	VisualObject.cpp\
+	ZoomEvaluator.cpp\
+	QuantumGL.cpp\
+	QuantumGLUT.cpp \
+	QuantumGLFW.cpp
+
+
+OBJS=$(SRCS:%.cpp=%.o)
+DEPS=$(SRCS:%.cpp=%.d)
+
+COPTS= -std=c++11 -I. -g -frtti -fpermissive
+# Linux variant LIBS= -L/usr/X11R6/lib/ -lglut -lGLU -lGL -lX11 -lXi -lXext -lXmu -lm  -pthread
+LIBS= -stdlib=libc++ -lglfw3 -framework Cocoa -framework OpenGL -framework IOKit
+
+#printo:
+#	echo $(OBJS)
+#printd:
+#	echo $(DEPS)
+
+all:	qugel
+
+
+parser:	quantum.tab.cpp lex.yy.cpp quantum.tab.h
+		
+quantum.tab.h quantum.tab.cpp: quantum.y
+		bison -d quantum.y
+		mv quantum.tab.c quantum.tab.cpp
+
+lex.yy.cpp: quantum.l
+		flex quantum.l
+		mv lex.yy.c lex.yy.cpp
+		
+		
+qugel:	$(OBJS)
+		clang++ -g3 -o qugel $(OBJS) $(LIBS)
+
+#clean:
+#		rm -f *.o
+#		rm -f FieldFunctions/*.o
+#		rm -f *.d
+#		rm -f FieldFunctions/*.d
+#		rm -f qugel
+
+#clean:
+#		rm -f $(OBJS)
+#		rm -f $(DEPS)
+#		rm -f depend
+#		rm -f qugel
+
+%.o:	%.cpp
+		clang++ -c $(COPTS) -o $@ $<
+
+depend: $(DEPS)
+		cat $(DEPS) | /usr/bin/sed 's/\.cpp\.o/.o/g' > depend
+
+%.d:	%.cpp
+		clang++ -MM $(COPTS) $< > $@
+		sed -i '' 's|^.*:|$*.o:|' $@
+
+include depend

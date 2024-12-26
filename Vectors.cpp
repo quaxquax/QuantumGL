@@ -1,4 +1,3 @@
-#include <GL/gl.h>
 #include "Vectors.h"
 #include "PointList.h"
 #include "ExpressionEvaluator.h"

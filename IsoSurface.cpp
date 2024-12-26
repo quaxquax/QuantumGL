@@ -1,4 +1,3 @@
-#include <GL/gl.h>
 #include "IsoSurface.h"
 #include "CubeInfo.h"
 #include "CubeEdges.h"

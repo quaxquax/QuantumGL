@@ -1,4 +1,3 @@
-#include <GL/gl.h>
 #include "QuantumConfig.h"
 #include "ImageExporter.h"
 
