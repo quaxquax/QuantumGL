@@ -19,7 +19,7 @@ EMSCRIPTEN_OPTS = \
     -s ASSERTIONS=1 \
     -s GL_EMULATE_GLES_VERSION_STRING_FORMAT=1 \
     -s LEGACY_GL_EMULATION=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
-    -ferror-limit=0 -std=c++11 -fPIE -lGL 
+    -ferror-limit=0 -std=c++11 -fPIE -stdlib=libc++ -lglut -lGL 
 
 SRCS=\
 	AbsEvaluator.cpp\
