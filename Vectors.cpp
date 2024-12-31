@@ -92,10 +92,18 @@ void Vectors::Draw(GLfloat camera[3], GLfloat light[3])
 	
 	assert(thePointList);
 
-	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	//glPushAttrib(GL_ALL_ATTRIB_BITS);
 	//glPointSize(5);
 	//glEnable(GL_POINT_SMOOTH);
 	//glEnable(GL_BLEND);
+
+	// Save states
+	GLboolean lighting_enabled = glIsEnabled(GL_LIGHTING);
+	GLboolean color_material_enabled = glIsEnabled(GL_COLOR_MATERIAL);
+	GLfloat current_color[4];
+	
+	glGetFloatv(GL_CURRENT_COLOR, current_color);
+	
 	glEnable(GL_LIGHTING);
 	glEnable(GL_COLOR_MATERIAL);
 	SetupShininess();
@@ -207,7 +215,11 @@ void Vectors::Draw(GLfloat camera[3], GLfloat light[3])
 		gluSphere(quadric,0.03,5,5);
 	glPopMatrix();*/
 
-	glPopAttrib();
+	//glPopAttrib();
+	// Restore states
+	if (lighting_enabled) glEnable(GL_LIGHTING);
+	if (color_material_enabled) glEnable(GL_COLOR_MATERIAL);
+	glColor4fv(current_color);
 
 	gluDeleteQuadric(quadric);
 }

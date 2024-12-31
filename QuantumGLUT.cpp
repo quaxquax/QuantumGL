@@ -22,36 +22,50 @@
 using namespace std;
 
 // Default scenario to render
-const char *example_text = 
-  "fovy := 25;\n"
-  "latitude := 20;\n"
-  "longitude := 17;\n"
-  "ambient := 1;\n"
-  "colorbox;\n"
-  "\n"
-  "variable nradial := 1;\n"
-  "variable lorbital := 3;\n"
-  "variable mag := 2;\n"
-  "\n"
-  "field theData resolution 64 := CoulombFunction(nradial+lorbital+1, lorbital, mag, 1) cut_to [-50,50] scaled_to [-1,1];\n"
-  "field absData := abs(theData);\n"
-  "\n"
-  "variable iso1 [0.0001,0.01] := 0.0013;\n"
-  "variable iso2 := 0.0026;\n"
-  "variable shine := 30;\n"
-  "variable isotransp [0,1] := 0.4;\n"
-  "\n"
-  "isosurface absData at iso1 color argcolor(theData) cutout <[0,1],[0,1],[-1,1]> transparency isotransp shininess shine;\n"
-  "isosurface absData at iso2 color argcolor(theData)  shininess shine;\n"
-  "\n"
-  "variable ypos [-1,1] := 0.0;\n"
-  "variable zpos [-1,1] := -0.25;\n"
-  "variable colormapR [0, 0.1] := 0.0026;\n"
-  "variable slicetransp [0,1] := 0.2;\n"
-  "\n"
-  "slice y = ypos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n"
-  "slice z = zpos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n";
+ const char *example_text = 
+   "fovy := 25;\n"
+   "latitude := 20;\n"
+   "longitude := 17;\n"
+   "ambient := 1;\n"
+   "colorbox;\n"
+   "\n"
+   "variable nradial := 1;\n"
+   "variable lorbital := 3;\n"
+   "variable mag := 2;\n"
+   "\n"
+   "field theData resolution 64 := CoulombFunction(nradial+lorbital+1, lorbital, mag, 1) cut_to [-50,50] scaled_to [-1,1];\n"
+   "field absData := abs(theData);\n"
+   "\n"
+   "variable iso1 [0.0001,0.01] := 0.0013;\n"
+   "variable iso2 := 0.0026;\n"
+   "variable shine := 30;\n"
+   "variable isotransp [0,1] := 0.4;\n"
+   "\n"
+   "isosurface absData at iso1 color argcolor(theData) cutout <[0,1],[0,1],[-1,1]> transparency isotransp shininess shine;\n"
+   "isosurface absData at iso2 color argcolor(theData)  shininess shine;\n"
+   "\n"
+   "variable ypos [-1,1] := 0.0;\n"
+   "variable zpos [-1,1] := -0.25;\n"
+   "variable colormapR [0, 0.1] := 0.0026;\n"
+   "variable slicetransp [0,1] := 0.2;\n"
+   "\n"
+   "slice y = ypos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n"
+   "slice z = zpos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n";
 
+// const char *example_text = 
+//   "fovy := 25;\n"
+//   "latitude := 20;\n"
+//   "longitude := 17;\n"
+//   "variable cn := 1;\n"
+//   "variable cl := 1;\n"
+//   "variable cm := 0;\n"
+//   "variable a [0,1] := 0;\n"
+//   "field theData resolution 64 := sqrt(1. - a*a)*CoulombFunctionT(1,0,0,1,100*a) + a*CoulombFunctionT(2, 1,1,1,100*a) cut_to [-12,12] scaled_to [-1,1];\n"
+//   "field absData := abs(theData);\n"
+//   "variable iso1:=0.006;\n"
+//   "variable iso2:=0.03;\n"
+//   "isosurface absData at iso1 color argcolor(theData) transparency 0.7 shininess 50;\n"
+//   "isosurface absData at iso2 color argcolor(theData) shininess 50;\n";
 
 // Global window handle
 GLFWwindow* window = nullptr;
@@ -234,11 +248,6 @@ int main(int argc, char **argv) {
     }
 
     cout << "Initializing OpenGL...\n";
-    
-    cout << "GL_VENDOR: " << (const char*) glGetString(GL_VENDOR) << endl;
-    cout << "GL_RENDERER: " << (const char*) glGetString(GL_RENDERER) << endl;
-    cout << "GL_VERSION: " << (const char*) glGetString(GL_VERSION) << endl;
-    cout << "GL_EXTENSIONS: " << (const char*) glGetString(GL_EXTENSIONS) << endl;
 
     AutoreleasePool::PushNewPool();
     VisualObject::BSP = new BSPTree();

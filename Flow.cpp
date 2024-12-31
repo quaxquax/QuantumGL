@@ -129,9 +129,15 @@ void Flow::Draw(GLfloat camera[3], GLfloat light[3])
 	glPopMatrix();
 
 	if(0){
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glDisable(GL_LIGHTING);
-		glColor3f(1,1,1);
+	  // Save states
+	  GLboolean lighting_enabled = glIsEnabled(GL_LIGHTING);
+	  GLfloat current_color[4];
+	  glGetFloatv(GL_CURRENT_COLOR, current_color);
+	  
+	  // Disable lighting and set color
+	  glDisable(GL_LIGHTING);
+	  glColor3f(1,1,1);
+
 		glBegin(GL_QUADS);
 			glTexCoord2f(0,0);
 			glVertex3f(-1,-1,-1);
@@ -142,7 +148,9 @@ void Flow::Draw(GLfloat camera[3], GLfloat light[3])
 			glTexCoord2f(0,1);
 			glVertex3f(-1,1,-1);
 		glEnd();
-		glPopAttrib();
+		// Restore states
+		if (lighting_enabled) glEnable(GL_LIGHTING);
+		glColor4fv(current_color);
 	}
 	
 	glDisable(GL_TEXTURE_1D);

@@ -421,7 +421,7 @@ void BSPTree::Draw(GLfloat camera[3], GLfloat light[3])
 {
 	//CalculateIfNecessary();
 	glDepthMask(false);
-	glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+	// glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(1,1,1);
 	glEnable(GL_LIGHTING);

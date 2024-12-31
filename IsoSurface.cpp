@@ -40,12 +40,12 @@ IsoSurface::~IsoSurface()
 		genData->DecRefCount();
 	if(thresholdExpr)
 		thresholdExpr->DecRefCount();
-	if(displayListIndex != -1)
-	{
-		LockGL();
-		glDeleteLists(displayListIndex,1);
-		UnlockGL();
-	}
+	// if(displayListIndex != -1)
+	// {
+	// 	LockGL();
+	// 	glDeleteLists(displayListIndex,1);
+	// 	UnlockGL();
+	// }
 }
 
 void IsoSurface::SetData(GeneralCubicData *someData)
@@ -411,78 +411,40 @@ void IsoSurface::Build(number thresh)
 
 	displayListDirty = true;
 }
-
 void IsoSurface::Draw(GLfloat camera[3], GLfloat light[3])
 {
-#if 1
-	if(transparencyExpr)
-		return;
-	if(displayListIndex == -1)
-	{
-		displayListIndex = glGenLists(1);	
-		displayListDirty = true;
-	}
-	if(displayListDirty)
-	{
-		displayListDirty = false;
-		
-		glNewList(displayListIndex,GL_COMPILE_AND_EXECUTE);
-		
-			GLfloat mat_diffuse[] = { 1.0, 1.0, 0.0, /*0.5*/1 };
-			glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-			glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
-			SetupShininess();
-				
-		//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//	glEnable(GL_BLEND);
-			glEnable(GL_COLOR_MATERIAL);
-		//	glColor3f(1,0,0);
-			glEnable(GL_LIGHTING);
-			
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
-			glEnableClientState(GL_VERTEX_ARRAY);
-		
-			glNormalPointer(GL_FLOAT,0,theNormals.x);
-			glColorPointer(3,GL_FLOAT,0,theColors.x);
-			glVertexPointer(3,GL_FLOAT,0,theVertices.x);
-		
-			glDrawElements(GL_TRIANGLES, theIndices.n, 
-						GL_UNSIGNED_INT, theIndices.x);
-			
-			glDisableClientState(GL_NORMAL_ARRAY);
-			glDisableClientState(GL_VERTEX_ARRAY);
-				
-			glDisable(GL_LIGHTING);
+    if(transparencyExpr)
+        return;
+        
+    GLfloat mat_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };
+    // glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+    SetupShininess();
+    
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_LIGHTING);
+    
+    // Enable vertex arrays
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
 
-			glDisable(GL_BLEND);
-			
-			/*glPointSize(10.0);
-			glBegin(GL_POINTS);
-			for(int i=0;i<data->cx;i++)
-			{
-				for(int j=0;j<data->cy;j++)
-				{
-					for(int k=0;k<data->cz;k++)
-					{
-						bool inside = data->data[i][j][k] > threshold;
-						glColor3f(inside ? 0 : 1,inside ? 1 : 0, 0);
-						glVertex3f(
-							-1 + 2*(i / double(data->cx-1)),
-							-1 + 2*(j / double(data->cy-1)),
-							-1 + 2*(k / double(data->cz-1)));
-					}
-				}
-			}
-			glEnd();*/
+    // Set up the vertex array pointers
+    glNormalPointer(GL_FLOAT, 0, theNormals.x);
+    glColorPointer(3, GL_FLOAT, 0, theColors.x);
+    glVertexPointer(3, GL_FLOAT, 0, theVertices.x);
 
-		glEndList();
-	}
-	else
-	{
-		glCallList(displayListIndex);
-	}
-#endif
+    // Draw the triangles using indexed rendering
+    glDrawElements(GL_TRIANGLES, theIndices.n, GL_UNSIGNED_INT, theIndices.x);
+    
+    // Clean up - disable vertex arrays
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    
+    // Disable states
+    glDisable(GL_LIGHTING);
+    glDisable(GL_BLEND);
 }
 
 void IsoSurface::SubmitToBSP()

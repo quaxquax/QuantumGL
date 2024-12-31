@@ -394,7 +394,7 @@ void display(void)
 		glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);	
 		glEnable(GL_LIGHT0);
 	
-		glLightModelf (GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+		//glLightModelf (GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 	
 		GLfloat fogColor[4] =
 			{0.0, 0.0, 0.0, 1.0};
