@@ -19,6 +19,15 @@ private:
 	}
 	
 public:
+    // Array subscript operators
+    inline T& operator[](int index) {
+        return x[index];
+    }
+    
+    inline const T& operator[](int index) const {
+        return x[index];
+    }
+    
 	inline void fit()
 	{
 		resize(n);
