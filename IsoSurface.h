@@ -88,6 +88,10 @@ public:
 	virtual bool	GetObjectRanges(Range& xr, Range& yr, Range& zr);
 
 	virtual bool	GetRecommendedBSPResolution(vecN3& res);
+
+	const DynArray<vecR3>& GetVertices() const { return theVertices; }
+	const DynArray<vecR3>& GetNormals() const { return theNormals; }
+	const DynArray<GLint>& GetIndices() const { return theIndices; }
 };
 
 
