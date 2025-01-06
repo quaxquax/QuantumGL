@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include "IsoSurface.h"
 #include "CubeInfo.h"
 #include "CubeEdges.h"
