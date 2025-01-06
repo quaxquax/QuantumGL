@@ -35,7 +35,11 @@
 #include "glu_mangle.h"
 #endif
 
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/gl.h>
+#endif
 
 #ifndef GLAPIENTRY
 #if defined(_MSC_VER) || defined(__MINGW32__)

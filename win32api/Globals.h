@@ -9,7 +9,11 @@
 #define GLOBALS_INC
 
 #include <windows.h>
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/gl.h>
+#endif
 #include "WorkerThread.h"
 #include "../QuantumDescription.h"
 #include "../RealVariable.h"

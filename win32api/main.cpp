@@ -19,7 +19,11 @@
 
 #include <windows.h>
 #include <COMMCTRL.h>
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/gl.h>
+#endif
 #include <GL/glu.h>
 #include "qMenu.h"
 #include "qDialog.h"

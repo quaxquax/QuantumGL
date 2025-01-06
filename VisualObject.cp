@@ -1,4 +1,10 @@
-#include <OpenGL/gl.h>
+Code
+CopyInsert
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/gl.h>
+#endif
 #include "VisualObject.h"
 #include "ExpressionEvaluator.h"
 #include "BSPTree.h"

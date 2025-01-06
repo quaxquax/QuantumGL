@@ -1,4 +1,8 @@
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/gl.h>
+#endif
 #include "BSPTree.h"
 #include "QuantumDescription.h"
 #include "VisualObject.h"

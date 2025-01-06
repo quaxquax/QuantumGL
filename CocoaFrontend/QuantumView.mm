@@ -2,7 +2,11 @@
 //#import "WorkerThreadController.h"
 #include "QuantumController.h"
 
-#include <OpenGL/gl.h>
+#ifdef __APPLE__
+    #include <OpenGL/gl.h>
+#else
+    #include <GL/gl.h>
+#endif
 
 #include "QuantumConfig.h"
 #include "QuantumFrontend.h"

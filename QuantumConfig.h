@@ -23,9 +23,9 @@
 #define GL_GLU_H <GL/glu.h>
 #define GL_GLUT_H <GL/glut.h>
 #else
-#define GL_GL_H <gl.h>
-#define GL_GLU_H <glu.h>
-#define GL_GLUT_H <glut.h>
+#define GL_GL_H <GL/gl.h>
+#define GL_GLU_H <GL/glu.h>
+#define GL_GLUT_H <GL/glut.h>
 
 	#ifdef __GNUC__
 		#include <windef.h>

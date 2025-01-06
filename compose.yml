@@ -1,0 +1,11 @@
+version: '3'
+services:
+  quantumgl:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - DISPLAY=${DISPLAY}
+    network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
