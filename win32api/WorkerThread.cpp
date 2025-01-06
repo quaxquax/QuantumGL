@@ -32,6 +32,7 @@ void UnlockGL() {}
 
 extern void SetProgressMessage(std::string s);
 
+// ... (rest of the code remains the same)
 
 DWORD WorkerThread::worker() 
 {    
@@ -84,7 +85,17 @@ DWORD WorkerThread::worker()
                     }
                     bAbortLocked = bWorking = false;
                 }
-            } 
+            }
+            else if( m->id == TM_EXPORT_OBJ )
+            {
+                if (currentObject && dynamic_cast<IsoSurface*>(currentObject))
+                {
+                    IsoSurface* surface = dynamic_cast<IsoSurface*>(currentObject);
+                    OBJExporter exporter;
+                    exporter.ExportToOBJ(*surface, m->str_data);
+                }
+                HeapFree(GetProcessHeap(), 0, m);
+            }
             else if( m->id == TM_CHANGE_VAR ) 
             {
                 if( bFileLoaded ) 
@@ -108,7 +119,7 @@ DWORD WorkerThread::worker()
                     m = tmp;
                 }    
                 if( bSingleFrame ) 
-                                MoveWindow(hwndGl, 0, 0, m->rect_data.right, m->rect_data.bottom, FALSE);              
+                                MoveWindow(hwndGl, 0, 0, m->rect_data.right, m->rect_data.bottom, FALSE);　　 　 　 　
                 reshape(m->rect_data.right, m->rect_data.bottom);
                 PostMessage(hwndGl, WM_PAINT, 0, 0);
             }   
@@ -575,4 +586,3 @@ bool WorkerThread::load(const std::string &fname)
         
         bFileLoaded = true;
 };
-

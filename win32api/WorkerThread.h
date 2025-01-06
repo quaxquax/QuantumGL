@@ -6,11 +6,14 @@
 	grunt work...
 */
 #include "ThreadQueue.h"
+#include "WinThread.h"
+#include "IsoSurface.h"
+#include "OBJExporter.h"
 
 #ifndef WORKERTHREAD_INC
 #define WORKERTHREAD_INC
 
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include <GL/glu.h>
 #include "qMenu.h"
 #include "qDialog.h"

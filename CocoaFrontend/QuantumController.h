@@ -74,6 +74,7 @@ class Animator;
 - (void)applicationWillFinishLaunching: (id)note;
 
 - (IBAction)selectAndOpenDescriptionFile: (id)sender;
+- (IBAction)exportToOBJ: (id)sender;
 
 - quantumView;
 

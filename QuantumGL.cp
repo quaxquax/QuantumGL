@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include "QuantumConfig.h"
 #include "CubicData.h"
 #include "QuantumMath.h"
@@ -198,6 +198,16 @@ void InitAngleVariables()
 	UpdateAngleVariables();
 }
 
+// GL locking functions
+void LockGL() {
+    // Implementation for GL locking
+    // This is a no-op in the current implementation since GLFW handles context management
+}
+
+void UnlockGL() {
+    // Implementation for GL unlocking
+    // This is a no-op in the current implementation since GLFW handles context management
+}
 
 void reshape(int w, int h)
 {

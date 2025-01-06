@@ -17,6 +17,7 @@
 //- (oneway void) releaseDescription;
 - (oneway void) quantumUpdate;
 - (void) releaseDescription;	// important: mustn't be oneway
+- (oneway void) exportToOBJ: (NSString *)file;
 @end
 
 @interface WorkerThreadController : NSObject <WorkerThreadMethods> {

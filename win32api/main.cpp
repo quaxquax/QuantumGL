@@ -19,7 +19,7 @@
 
 #include <windows.h>
 #include <COMMCTRL.h>
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include <GL/glu.h>
 #include "qMenu.h"
 #include "qDialog.h"
@@ -59,7 +59,6 @@ void PostRedisplay() { }
 
 // app mode
 bool bSingleFrame=false;
-
 
 // globals
 const char	szAppName[] = "QuantumGL";
@@ -163,6 +162,29 @@ void onExportImage()
     msg->rect_data.right = fs.w;
     msg->rect_data.bottom = fs.h;
     theQueue.add(msg);
+};
+
+// called when exporting to OBJ format
+void onExportOBJ()
+{
+    char szFile[MAX_PATH] = "";
+    OPENFILENAME ofn;
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = hwndMain;
+    ofn.lpstrFilter = "OBJ Files (*.obj)\0*.obj\0All Files (*.*)\0*.*\0";
+    ofn.lpstrFile = szFile;
+    ofn.nMaxFile = MAX_PATH;
+    ofn.lpstrDefExt = "obj";
+    ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
+
+    if(GetSaveFileName(&ofn))
+    {
+        qThreadMessage *msg = (qThreadMessage*)HeapAlloc(GetProcessHeap(), 0, sizeof(qThreadMessage));
+        msg->id = TM_EXPORT_OBJ;
+        msg->str_data = ofn.lpstrFile;
+        theQueue.add(msg);
+    }
 };
 
 // reads opengl draw buffer and exports it to a .png
@@ -582,6 +604,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
          case IDM_EXPORT_BACKBUFFER:
                   onExportImage();
          break;
+         case IDM_EXPORT_OBJ:
+                  onExportOBJ();
+         break;
          case IDM_FILE_EXIT:
                   //printf("Exit menu-item selected...\n");
                   PostMessage(hwnd, WM_CLOSE, 0, 0);
@@ -853,6 +878,9 @@ LRESULT CALLBACK MultiFrameWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lP
          break;
          case IDM_EXPORT_BACKBUFFER:
                   onExportImage();
+         break;
+         case IDM_EXPORT_OBJ:
+                  onExportOBJ();
          break;
          case IDM_FILE_EXIT:
                   PostMessage(hwnd, WM_CLOSE, 0, 0);

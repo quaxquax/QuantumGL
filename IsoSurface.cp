@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include "IsoSurface.h"
 #include "CubeInfo.h"
 #include "CubeEdges.h"
@@ -411,6 +411,30 @@ void IsoSurface::Build(number thresh)
 				 << "% of vertices folded.\n";
 
 	displayListDirty = true;
+}
+
+void IsoSurface::BuildGLObjects1() {
+    if (!displayListDirty) return;
+    
+    if (displayListIndex != -1) {
+        glDeleteLists(displayListIndex, 1);
+        displayListIndex = -1;
+    }
+
+    if (theVertices.n == 0) return;
+
+    displayListIndex = glGenLists(1);
+    glNewList(displayListIndex, GL_COMPILE);
+    
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < theVertices.n; i++) {
+        glNormal3f(theNormals.x[i].x, theNormals.x[i].y, theNormals.x[i].z);
+        glVertex3f(theVertices.x[i].x, theVertices.x[i].y, theVertices.x[i].z);
+    }
+    glEnd();
+    
+    glEndList();
+    displayListDirty = false;
 }
 
 void IsoSurface::Draw(GLfloat camera[3], GLfloat light[3])

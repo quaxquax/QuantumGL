@@ -4,6 +4,7 @@
 #include "QuantumConfig.h"
 #include "QuantumMath.h"
 #include "CalculationStage.h"
+#include "DynArray.h"
 
 #include GL_GL_H
 
@@ -61,6 +62,12 @@ public:
 	virtual bool	GetRecommendedBSPResolution(vecN3& res);
 	
 	virtual void	UpdateMaterials();
+
+	// Methods for mesh export
+	virtual bool HasMeshData() const { return false; }
+	virtual const DynArray<vecR3>* GetVertices() const { return nullptr; }
+	virtual const DynArray<vecR3>* GetNormals() const { return nullptr; }
+	virtual const DynArray<GLint>* GetIndices() const { return nullptr; }
 };
 
 #endif

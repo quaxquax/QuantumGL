@@ -695,6 +695,18 @@ QuantumView *qview = nil;
 	
 }
 
+- (IBAction)exportToOBJ: (id)sender
+{
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+    [savePanel setAllowedFileTypes:[NSArray arrayWithObject:@"obj"]];
+    [savePanel setTitle:@"Export OBJ"];
+    
+    if ([savePanel runModal] == NSModalResponseOK) {
+        NSString *filename = [[savePanel URL] path];
+        [workerThreadProxy exportToOBJ:filename];
+    }
+}
+
 - (void) setActiveAnimation: (Animator*) anim
 {
 	activeAnimation = anim;

@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include "BSPTree.h"
 #include "QuantumDescription.h"
 #include "VisualObject.h"

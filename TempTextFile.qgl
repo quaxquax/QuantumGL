@@ -1,0 +1,28 @@
+fovy := 25;
+latitude := 20;
+longitude := 17;
+ambient := 1;
+colorbox;
+
+variable nradial := 1;
+variable lorbital := 3;
+variable mag := 2;
+
+field theData resolution 64 := CoulombFunction(nradial+lorbital+1, lorbital, mag, 1) cut_to [-50,50] scaled_to [-1,1];
+field absData := abs(theData);
+
+variable iso1 [0.0001,0.01] := 0.0013;
+variable iso2 := 0.0026;
+variable shine := 30;
+variable isotransp [0,1] := 0.4;
+
+isosurface absData at iso1 color argcolor(theData) cutout <[0,1],[0,1],[-1,1]> transparency isotransp shininess shine;
+isosurface absData at iso2 color argcolor(theData)  shininess shine;
+
+variable ypos [-1,1] := 0.0;
+variable zpos [-1,1] := -0.25;
+variable colormapR [0, 0.1] := 0.0026;
+variable slicetransp [0,1] := 0.2;
+
+slice y = ypos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;
+slice z = zpos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;

@@ -1,0 +1,27 @@
+CC = clang++
+CFLAGS = -g3 -std=c++11
+INCLUDES = -I/opt/homebrew/include
+LIBS = -L/opt/homebrew/lib -lglfw -framework OpenGL
+
+SRCS = AbsEvaluator.cp Animator.cp AutoreleasePool.cp BSPTree.cp CalculationStage.cp \
+       CommonEvaluator.cp CubeEdges.cp CubeInfo.cp CutToEvaluator.cp DefinedField.cp \
+       ExplicitPointList.cp ExpressionEvaluator.cp Expressions.cp Flow.cp FieldExpressions.cp \
+       FieldFunction.cp GridPointList.cp ImageExporter.stub.cp IsoSurface.cp \
+       lex.yy.cp quantum.tab.cp QuantumDescription.cp ReadEvaluator.cp RealVariable.cp \
+       ReferenceCounted.cp ScaleToEvaluator.cp Slice.cp StandardFunctions.cp ValueEvaluator.cp \
+       ValueExpressions.cp Vectors.cp VisualObject.cp ZoomEvaluator.cp QuantumGL.cp QuantumGLUT.cp \
+       OBJExporter.cp QuantumProgress.cp
+
+FIELD_FUNCS = FieldFunctions/CoulombFunctions.cp FieldFunctions/FieldFunctionRegistry.cp \
+              FieldFunctions/Hydrogen553.cp FieldFunctions/StdFieldFunctions.cp
+
+OBJS = $(SRCS:.cp=.o) $(FIELD_FUNCS:.cp=.o)
+
+qugel: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+
+%.o: %.cp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -f $(OBJS) qugel

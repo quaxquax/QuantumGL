@@ -9,6 +9,8 @@
 #import "WorkerThreadController.h"
 #import "QuantumController.h"
 #import "QuantumView.h"
+#import "IsoSurface.h"
+#import "OBJExporter.h"
 
 #include "QuantumConfig.h"
 #include "QuantumFrontend.h"
@@ -183,6 +185,17 @@ id<UIThreadMethods> gUIThreadProxy;
 	ReleaseDescription();
 	NSLog(@"release description end");
 }
+
+- (void) exportToOBJ: (NSString *)file
+{
+    if (currentObject && dynamic_cast<IsoSurface*>(currentObject))
+    {
+        IsoSurface* surface = dynamic_cast<IsoSurface*>(currentObject);
+        OBJExporter exporter;
+        exporter.ExportToOBJ(*surface, [file UTF8String]);
+    }
+}
+
 @end
 
 void SetProgressMessage(string msg)
@@ -205,4 +218,3 @@ void Progress(double x)
 {
 	[gUIThreadProxy progress: x];
 }
-

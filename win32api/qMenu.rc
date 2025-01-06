@@ -18,6 +18,7 @@ qMenu MENU
     POPUP "&Export"
     {
         MENUITEM "Export &Image", IDM_EXPORT_BACKBUFFER
+        MENUITEM "Export &OBJ", IDM_EXPORT_OBJ
         MENUITEM SEPARATOR
         MENUITEM "Export &Current Animation", IDM_EXPORT_CURRENT_ANIMATION
         MENUITEM "Export &All Animations", IDM_EXPORT_ALL_ANIMATIONS

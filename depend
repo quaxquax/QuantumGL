@@ -1,0 +1,126 @@
+AbsEvaluator.o: AbsEvaluator.cp AbsEvaluator.h ExpressionEvaluator.h \
+  QuantumMath.h CommonEvaluator.h ReferenceCounted.h
+Animator.o: Animator.cp QuantumConfig.h Animator.h QuantumMath.h \
+  RealVariable.h ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h \
+  ImageExporter.h
+AutoreleasePool.o: AutoreleasePool.cp AutoreleasePool.h \
+  ReferenceCounted.h
+BSPTree.o: BSPTree.cp BSPTree.h QuantumConfig.h QuantumMath.h \
+  CalculationStage.h RealVariable.h ValueEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h CubicData.h DynArray.h QuantumDescription.h \
+  VisualObject.h
+CalculationStage.o: CalculationStage.cp CalculationStage.h RealVariable.h \
+  ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h QuantumMath.h \
+  QuantumProgress.h
+CommonEvaluator.o: CommonEvaluator.cp CommonEvaluator.h \
+  ReferenceCounted.h
+CubeEdges.o: CubeEdges.cp CubeEdges.h CubicData.h QuantumMath.h \
+  ReferenceCounted.h
+CubeInfo.o: CubeInfo.cp CubeInfo.h
+CutToEvaluator.o: CutToEvaluator.cp CutToEvaluator.h \
+  ExpressionEvaluator.h QuantumMath.h CommonEvaluator.h \
+  ReferenceCounted.h
+DefinedField.o: DefinedField.cp DefinedField.h CalculationStage.h \
+  RealVariable.h ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h \
+  QuantumMath.h ExpressionEvaluator.h CubicData.h
+ExplicitPointList.o: ExplicitPointList.cp ExplicitPointList.h PointList.h \
+  ReferenceCounted.h QuantumMath.h ValueEvaluator.h CommonEvaluator.h
+ExpressionEvaluator.o: ExpressionEvaluator.cp ExpressionEvaluator.h \
+  QuantumMath.h CommonEvaluator.h ReferenceCounted.h CubicData.h \
+  TrilinearInterpolation.h DefinedField.h CalculationStage.h \
+  RealVariable.h ValueEvaluator.h QuantumProgress.h
+Expressions.o: Expressions.cp Expressions.h ValueExpressions.h \
+  ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h QuantumMath.h \
+  FieldExpressions.h ExpressionEvaluator.h
+Flow.o: Flow.cp Flow.h VisualObject.h QuantumConfig.h QuantumMath.h \
+  CalculationStage.h RealVariable.h ValueEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h PointList.h ExpressionEvaluator.h LockGL.h \
+  PredefinedVariables.h
+FieldExpressions.o: FieldExpressions.cp FieldExpressions.h \
+  ExpressionEvaluator.h QuantumMath.h CommonEvaluator.h \
+  ReferenceCounted.h ValueExpressions.h ValueEvaluator.h
+FieldFunction.o: FieldFunction.cp FieldFunctionImpl.h FieldFunction.h \
+  QuantumMath.h ExpressionEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h FieldFunctionUser.h RealVariable.h ValueEvaluator.h \
+  QuantumDescription.h
+FieldFunctions/CoulombFunctions.o: FieldFunctions/CoulombFunctions.cp \
+  FieldFunctions/CoulombFunctions.h FieldFunction.h QuantumMath.h \
+  ExpressionEvaluator.h CommonEvaluator.h ReferenceCounted.h
+FieldFunctions/FieldFunctionRegistry.o: FieldFunctions/FieldFunctionRegistry.cp \
+  FieldFunctionImpl.h FieldFunction.h QuantumMath.h \
+  ExpressionEvaluator.h CommonEvaluator.h ReferenceCounted.h \
+  FieldFunctionUser.h RealVariable.h ValueEvaluator.h \
+  FieldFunctions/StdFieldFunctions.h FieldFunctions/Hydrogen553.h \
+  FieldFunctions/CoulombFunctions.h
+FieldFunctions/Hydrogen553.o: FieldFunctions/Hydrogen553.cp FieldFunction.h \
+  QuantumMath.h ExpressionEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h FieldFunctions/Hydrogen553.h
+FieldFunctions/StdFieldFunctions.o: FieldFunctions/StdFieldFunctions.cp FieldFunction.h \
+  QuantumMath.h ExpressionEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h FieldFunctions/StdFieldFunctions.h
+GridPointList.o: GridPointList.cp GridPointList.h PointList.h \
+  ReferenceCounted.h QuantumMath.h ValueEvaluator.h CommonEvaluator.h
+ImageExporter.stub.o: ImageExporter.stub.cp
+IsoSurface.o: IsoSurface.cp IsoSurface.h VisualObject.h QuantumConfig.h \
+  QuantumMath.h CalculationStage.h RealVariable.h ValueEvaluator.h \
+  CommonEvaluator.h ReferenceCounted.h CubicData.h DynArray.h CubeInfo.h \
+  CubeEdges.h ExpressionEvaluator.h BSPTree.h LockGL.h
+lex.yy.o: lex.yy.cp QuantumMath.h QuantumDescription.h quantum.tab.h
+quantum.tab.o: quantum.tab.cp QuantumMath.h QuantumDescription.h \
+  BSPTree.h QuantumConfig.h CalculationStage.h RealVariable.h \
+  ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h CubicData.h \
+  DynArray.h ReadEvaluator.h ExpressionEvaluator.h AbsEvaluator.h \
+  ZoomEvaluator.h ScaleToEvaluator.h CutToEvaluator.h IsoSurface.h \
+  VisualObject.h Slice.h Vectors.h Flow.h ExplicitPointList.h \
+  PointList.h GridPointList.h FieldFunctionUser.h Animator.h \
+  DefinedField.h ValueExpressions.h FieldExpressions.h Expressions.h \
+  StandardFunctions.h
+QuantumDescription.o: QuantumDescription.cp QuantumDescription.h \
+  QuantumMath.h quantum.tab.h RealVariable.h ValueEvaluator.h \
+  CommonEvaluator.h ReferenceCounted.h Animator.h DefinedField.h \
+  CalculationStage.h VisualObject.h QuantumConfig.h
+ReadEvaluator.o: ReadEvaluator.cp ReadEvaluator.h ExpressionEvaluator.h \
+  QuantumMath.h CommonEvaluator.h ReferenceCounted.h CubicData.h
+RealVariable.o: RealVariable.cp RealVariable.h ValueEvaluator.h \
+  CommonEvaluator.h ReferenceCounted.h QuantumMath.h
+ReferenceCounted.o: ReferenceCounted.cp ReferenceCounted.h \
+  AutoreleasePool.h
+ScaleToEvaluator.o: ScaleToEvaluator.cp ScaleToEvaluator.h \
+  ExpressionEvaluator.h QuantumMath.h CommonEvaluator.h \
+  ReferenceCounted.h
+Slice.o: Slice.cp Slice.h VisualObject.h QuantumConfig.h QuantumMath.h \
+  CalculationStage.h RealVariable.h ValueEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h ExpressionEvaluator.h BSPTree.h CubicData.h \
+  DynArray.h LockGL.h
+StandardFunctions.o: StandardFunctions.cp StandardFunctions.h \
+  ValueExpressions.h ValueEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h QuantumMath.h QuantumDescription.h
+ValueEvaluator.o: ValueEvaluator.cp ValueEvaluator.h CommonEvaluator.h \
+  ReferenceCounted.h QuantumMath.h
+ValueExpressions.o: ValueExpressions.cp ValueExpressions.h \
+  ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h QuantumMath.h \
+  ExpressionEvaluator.h
+Vectors.o: Vectors.cp Vectors.h VisualObject.h QuantumConfig.h \
+  QuantumMath.h CalculationStage.h RealVariable.h ValueEvaluator.h \
+  CommonEvaluator.h ReferenceCounted.h PointList.h ExpressionEvaluator.h
+VisualObject.o: VisualObject.cp VisualObject.h QuantumConfig.h \
+  QuantumMath.h CalculationStage.h RealVariable.h ValueEvaluator.h \
+  CommonEvaluator.h ReferenceCounted.h ExpressionEvaluator.h BSPTree.h \
+  CubicData.h DynArray.h LockGL.h
+ZoomEvaluator.o: ZoomEvaluator.cp ZoomEvaluator.h ExpressionEvaluator.h \
+  QuantumMath.h CommonEvaluator.h ReferenceCounted.h RealVariable.h \
+  ValueEvaluator.h
+QuantumGL.o: QuantumGL.cp QuantumConfig.h CubicData.h QuantumMath.h \
+  ReferenceCounted.h DynArray.h CubeInfo.h IsoSurface.h VisualObject.h \
+  CalculationStage.h RealVariable.h ValueEvaluator.h CommonEvaluator.h \
+  ReadEvaluator.h ExpressionEvaluator.h AbsEvaluator.h \
+  QuantumDescription.h FieldFunctionUser.h StandardFunctions.h \
+  Animator.h BSPTree.h ImageExporter.h AutoreleasePool.h \
+  QuantumFrontend.h QuantumProgress.h PredefinedVariables.h
+QuantumGLUT.o: QuantumGLUT.cp QuantumConfig.h QuantumFrontend.h \
+  QuantumMath.h QuantumProgress.h QuantumDescription.h RealVariable.h \
+  ValueEvaluator.h CommonEvaluator.h ReferenceCounted.h Animator.h \
+  VisualObject.h CalculationStage.h DynArray.h BSPTree.h CubicData.h \
+  AutoreleasePool.h FieldFunctionUser.h StandardFunctions.h CubeInfo.h \
+  ImageExporter.h OBJExporter.h IsoSurface.h \
+  /opt/homebrew/include/GLFW/glfw3.h

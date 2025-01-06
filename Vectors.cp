@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include "Vectors.h"
 #include "PointList.h"
 #include "ExpressionEvaluator.h"

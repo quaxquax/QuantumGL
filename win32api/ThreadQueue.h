@@ -18,7 +18,8 @@
 #define TM_DRAW             3   
 #define TM_CHANGE_VAR       4   // str_data and float_data must be filled
 #define TM_EXPORT_BACK      5   // str_data must be filled
-#define TM_RESIZE_PORT      6   // rect_data must be filled
+#define TM_EXPORT_OBJ       6   // str_data must be filled with filename
+#define TM_RESIZE_PORT      7   // rect_data must be filled
 
 #define TM_PLAY_ANIMATION   8    
 #define TM_PAUSE_ANIMATION  9
