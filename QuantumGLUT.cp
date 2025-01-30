@@ -137,6 +137,33 @@ static void ExportPOV()
 	cout << "done.\n";
 }
 
+static void ExportVertices()
+{
+	cout << "Exporting Vertices Array ...\n";
+	ofstream out("Vertices.txt");
+	for(theVisualObjectsList::iterator p = theVisualObjects.begin();
+			p != theVisualObjects.end();++p)
+	{
+		(*p)->OutputVertices(out);
+	}
+	cout << "done.\n";
+}
+
+static void ExportSolidVertices()
+{
+	cout << "Exporting Vertices Array ...\n";
+	ofstream out("Vertices.txt");
+	for(theVisualObjectsList::iterator p = theVisualObjects.begin();
+			p != theVisualObjects.end();++p)
+	{
+		(*p)->OutputSolidVertices(out);
+	}
+	cout << "done.\n";
+}
+
+
+ 
+
 static void key(unsigned char key,int,int)
 {
 	switch(key)
@@ -190,6 +217,13 @@ static void key(unsigned char key,int,int)
 					break;
 		case 'p':	ExportPOV();
 					break;
+		case 'v':	ExportVertices();
+					break;
+		case 'o':	ExportSolidVertices();
+					break;
+					
+
+					
 					
 		case 'q':	PrintReferenceCountingStatistics();
 					ReleaseDescription();
