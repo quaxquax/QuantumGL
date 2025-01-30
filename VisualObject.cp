@@ -1,4 +1,4 @@
-#include <GL/gl.h>
+#include <OpenGL/gl.h>
 #include "VisualObject.h"
 #include "ExpressionEvaluator.h"
 #include "BSPTree.h"
