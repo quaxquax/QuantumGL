@@ -82,7 +82,16 @@ bool VisualObject::GetObjectRanges(Range& xr, Range& yr, Range& zr)
 
 void VisualObject::OutputPOV(ostream& out)
 {
-	out << "#warning \"object type not supported\"" << endl;
+	out << "#warning \"object type not supported.\"" << endl;
+}
+
+void VisualObject::OutputVertices(ostream& out)
+{
+	out << "#warning \"object type not supported for Vertex export.\"" << endl;
+}
+void VisualObject::OutputSolidVertices(ostream& out)
+{
+	out << "#warning \"object type not supported for Vertex export.\"" << endl;
 }
 
 bool VisualObject::GetRecommendedBSPResolution(vecN3& res)

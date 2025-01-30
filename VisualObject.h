@@ -52,7 +52,10 @@ public:
 	
 	virtual void	SubmitToBSP();
 	virtual void	OutputPOV(ostream& out);
+	virtual void	OutputVertices(ostream& out);
+	virtual void	OutputSolidVertices(ostream& out);
 
+  
 	static BSPTree	*BSP;
 	static MaterialUpdater	*BSPMaterialUpdater;
 

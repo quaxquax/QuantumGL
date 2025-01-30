@@ -74,6 +74,8 @@ public:
 
 	void	SubmitToBSP();
 	void	OutputPOV(ostream& out);
+	void	OutputVertices(ostream& out);
+	void	OutputSolidVertices(ostream& out);
 	
 	/*RealVariableWatcher	*GetDataFunctionWatcher()
 			{	return &dataFunctionWatcher;	}*/

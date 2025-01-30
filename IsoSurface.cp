@@ -546,9 +546,70 @@ void IsoSurface::SubmitToBSP()
 	cout << (theIndices.n/3) << "/" << (theIndices.n/3) << endl;
 }
 
+static void outArrVec(ostream& out,vecR3 vec)
+{
+  out << vec.x << ',' << vec.y << ',' << vec.z << ',';
+}
+
 static void outPOVVec(ostream& out,vecR3 vec)
 {
 	out << '<' << vec.x << ',' << vec.y << ',' << vec.z << '>';
+}
+
+void IsoSurface::OutputVertices(ostream& out)
+{
+	number trans;
+	if(transparencyExpr)
+		transparencyExpr->EvaluateReal(1,&trans);
+	else
+		trans = 0;
+
+	float alpha = 1-trans;
+	
+	for(int i=0;i<theIndices.n;i+=3)
+	{
+		int idx1 = theIndices.x[i];
+		int idx2 = theIndices.x[i+1];
+		int idx3 = theIndices.x[i+2];
+
+		outArrVec(out,theVertices.x[idx1]); 
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";
+		outArrVec(out,theVertices.x[idx2]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";		
+		outArrVec(out,theVertices.x[idx3]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+		    << theColors.x[idx1].z << ',' << alpha << ",\n";
+	}
+}
+
+void IsoSurface::OutputSolidVertices(ostream& out)
+{
+	number trans;
+	if(transparencyExpr)
+		return;
+	else
+		trans = 0;
+
+	float alpha = 1-trans;
+	
+	for(int i=0;i<theIndices.n;i+=3)
+	{
+		int idx1 = theIndices.x[i];
+		int idx2 = theIndices.x[i+1];
+		int idx3 = theIndices.x[i+2];
+
+		outArrVec(out,theVertices.x[idx1]); 
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";
+		outArrVec(out,theVertices.x[idx2]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";		
+		outArrVec(out,theVertices.x[idx3]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+		    << theColors.x[idx1].z << ',' << alpha << ",\n";
+	}
 }
 
 void IsoSurface::OutputPOV(ostream& out)
