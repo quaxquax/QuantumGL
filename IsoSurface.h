@@ -71,7 +71,7 @@ public:
 	
 	void	Build();
 	void	SetGLObjectsDirty();
-
+ 
 	void	SubmitToBSP();
 	void	OutputPOV(ostream& out);
 	void	OutputVertices(ostream& out);

@@ -583,7 +583,7 @@ void IsoSurface::OutputVertices(ostream& out)
 		    << theColors.x[idx1].z << ',' << alpha << ",\n";
 	}
 }
-
+ 
 void IsoSurface::OutputSolidVertices(ostream& out)
 {
 	number trans;

@@ -93,7 +93,7 @@ void VisualObject::OutputSolidVertices(ostream& out)
 {
 	out << "#warning \"object type not supported for Vertex export.\"" << endl;
 }
-
+ 
 bool VisualObject::GetRecommendedBSPResolution(vecN3& res)
 {
 	return false;

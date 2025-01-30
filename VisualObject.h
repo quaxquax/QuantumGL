@@ -64,6 +64,6 @@ public:
 	virtual bool	GetRecommendedBSPResolution(vecN3& res);
 	
 	virtual void	UpdateMaterials();
-};
+}; 
 
 #endif
