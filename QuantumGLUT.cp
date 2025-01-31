@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+//#include <OpenGL/gl.h>
 #include "QuantumConfig.h"
 #include "QuantumFrontend.h"
 #include "QuantumProgress.h"
@@ -17,11 +17,42 @@
 #include <SIOUX.h>
 #endif
 
-#include GL_GLUT_H
+//#include GL_GLUT_H
 #include <iostream>
 #include <fstream>
 
 using namespace std;
+
+// Default scenario to render
+ const char *example_text = 
+   "fovy := 25;\n"
+   "latitude := 20;\n"
+   "longitude := 17;\n"
+   "ambient := 1;\n"
+   "colorbox;\n"
+   "\n"
+   "variable nradial := 1;\n"
+   "variable lorbital := 3;\n"
+   "variable mag := 2;\n"
+   "\n"
+   "field theData resolution 64 := CoulombFunction(nradial+lorbital+1, lorbital, mag, 1) cut_to [-50,50] scaled_to [-1,1];\n"
+   "field absData := abs(theData);\n"
+   "\n"
+   "variable iso1 [0.0001,0.01] := 0.0013;\n"
+   "variable iso2 := 0.0026;\n"
+   "variable shine := 30;\n"
+   "variable isotransp [0,1] := 0.4;\n"
+   "\n"
+   "isosurface absData at iso1 color argcolor(theData) cutout <[0,1],[0,1],[-1,1]> transparency isotransp shininess shine;\n"
+   "isosurface absData at iso2 color argcolor(theData)  shininess shine;\n"
+   "\n"
+   "variable ypos [-1,1] := 0.0;\n"
+   "variable zpos [-1,1] := -0.25;\n"
+   "variable colormapR [0, 0.1] := 0.0026;\n"
+   "variable slicetransp [0,1] := 0.2;\n"
+   "\n"
+   "slice y = ypos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n"
+   "slice z = zpos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n";
 
 definedRealVariablesMap::iterator currentVar;
 bool showDrawing = false;
@@ -62,29 +93,29 @@ void UnlockGL()
 
 bool ExportImage(const char * name)
 {
-	cout << "Rendering...\n";
-	glDrawBuffer(showDrawing ? GL_FRONT : GL_BACK);
-	Render();
-	if(!ExportBackBuffer(sizeH,sizeV,name))
-		return false;
-	SwapBuffers();
+	// cout << "Rendering...\n";
+	// glDrawBuffer(showDrawing ? GL_FRONT : GL_BACK);
+	// Render();
+	// if(!ExportBackBuffer(sizeH,sizeV,name))
+	// 	return false;
+	// SwapBuffers();
 	return true;
 }
 
 static void mouse1(int button, int state, int x, int y)
 {
-	switch(state)
-	{
-		case GLUT_DOWN: state = kMBDown; break;
-		case GLUT_UP: state = kMBUp; break;
-	}
-	switch(button)
-	{
-		case GLUT_LEFT_BUTTON: button = kMBLeft; break;
-		case GLUT_MIDDLE_BUTTON: button = kMBMiddle; break;
-		case GLUT_RIGHT_BUTTON: button = kMBRight; break;
-	}
-	mouse(button,state,x,y);
+	// switch(state)
+	// {
+	// 	case GLUT_DOWN: state = kMBDown; break;
+	// 	case GLUT_UP: state = kMBUp; break;
+	// }
+	// switch(button)
+	// {
+	// 	case GLUT_LEFT_BUTTON: button = kMBLeft; break;
+	// 	case GLUT_MIDDLE_BUTTON: button = kMBMiddle; break;
+	// 	case GLUT_RIGHT_BUTTON: button = kMBRight; break;
+	// }
+	// mouse(button,state,x,y);
 }
 
 
@@ -94,23 +125,23 @@ static void special(int key,int,int)
 		return;
 	switch(key)
 	{
-		case GLUT_KEY_LEFT:
-							if(currentVar == definedRealVariables.begin())
-								currentVar = definedRealVariables.end();
-							--currentVar;
-							cout << "Selected variable: " << currentVar->first << endl;
-							break;	
-		case GLUT_KEY_RIGHT:
-							if(++currentVar == definedRealVariables.end())
-								currentVar = definedRealVariables.begin();
-							cout << "Selected variable: " << currentVar->first << endl;
-							break;	
-		case GLUT_KEY_UP:	currentVar->second->ChangeTo(currentVar->second->value + 0.02);
-							cout << currentVar->first << " = " << currentVar->second->value << endl;
-							break;
-		case GLUT_KEY_DOWN:	currentVar->second->ChangeTo(currentVar->second->value - 0.02);
-							cout << currentVar->first << " = " << currentVar->second->value << endl;
-							break;
+		// case GLUT_KEY_LEFT:
+		// 					if(currentVar == definedRealVariables.begin())
+		// 						currentVar = definedRealVariables.end();
+		// 					--currentVar;
+		// 					cout << "Selected variable: " << currentVar->first << endl;
+		// 					break;	
+		// case GLUT_KEY_RIGHT:
+		// 					if(++currentVar == definedRealVariables.end())
+		// 						currentVar = definedRealVariables.begin();
+		// 					cout << "Selected variable: " << currentVar->first << endl;
+		// 					break;	
+		// case GLUT_KEY_UP:	currentVar->second->ChangeTo(currentVar->second->value + 0.02);
+		// 					cout << currentVar->first << " = " << currentVar->second->value << endl;
+		// 					break;
+		// case GLUT_KEY_DOWN:	currentVar->second->ChangeTo(currentVar->second->value - 0.02);
+		// 					cout << currentVar->first << " = " << currentVar->second->value << endl;
+		// 					break;
 	}
 	display();
 }
@@ -144,7 +175,7 @@ static void ExportVertices()
 	for(theVisualObjectsList::iterator p = theVisualObjects.begin();
 			p != theVisualObjects.end();++p)
 	{
-		(*p)->OutputVertices(out);
+	  (*p)->OutputVertices(std::cout);
 	}
 	cout << "done.\n";
 }
@@ -172,49 +203,49 @@ static void key(unsigned char key,int,int)
 					timePerFrame = nFrames = 0;
 					break;*/
 		case '\r':
-		case '\n':
-					if(!definedRealVariables.empty())
-					{
-						cout << "Changing variable...\n";
-						cout << currentVar->first << " = " << currentVar->second->value << endl;
-						cout << currentVar->first << " := ";
-						number newVal;
-						cin >> newVal;
-						currentVar->second->ChangeTo(newVal);
-						glutPostRedisplay();
-					}
-					break;
+		// case '\n':
+		// 			if(!definedRealVariables.empty())
+		// 			{
+		// 				cout << "Changing variable...\n";
+		// 				cout << currentVar->first << " = " << currentVar->second->value << endl;
+		// 				cout << currentVar->first << " := ";
+		// 				number newVal;
+		// 				cin >> newVal;
+		// 				currentVar->second->ChangeTo(newVal);
+		// 				glutPostRedisplay();
+		// 			}
+		// 			break;
 /*		case 'p':	ProfilerDump("\p:profiles:Profile");
 					break;*/
 	/*	case 's':	showDrawing = !showDrawing;
 					break;*/
-		case 'x':	cout << "Rendering...\n";
-					glDrawBuffer(showDrawing ? GL_FRONT : GL_BACK);
-					Render();
-					ExportBackBuffer(sizeH,sizeV);
-					break;
-		case 'a':	ExportAnimations();
-					break;
-		case 'f':	drawQuickWhenDown = !drawQuickWhenDown;
-					break;
-		case 'c':	doCull = (doCull+1)%3;
-					glutPostRedisplay();
-					break;
-		case 't':	{
-						GLint time = glutGet(GLUT_ELAPSED_TIME);
-						cout << "starting speed test for 5 seconds...\n";
-						GLint time2;
-						GLint n = 0;
-						while( (time2 = glutGet(GLUT_ELAPSED_TIME)) - time < 5000)
-						{
-							idle();
-							display();
-							n++;
-						}
-						cout << n << " frames in " << time2-time << "ms => "
-							<< 1000*n/double(time2-time) << "fps\n";
-					}
-					break;
+		// case 'x':	cout << "Rendering...\n";
+		// 			glDrawBuffer(showDrawing ? GL_FRONT : GL_BACK);
+		// 			Render();
+		// 			ExportBackBuffer(sizeH,sizeV);
+		// 			break;
+		// case 'a':	ExportAnimations();
+		// 			break;
+		// case 'f':	drawQuickWhenDown = !drawQuickWhenDown;
+		// 			break;
+		// case 'c':	doCull = (doCull+1)%3;
+		// 			glutPostRedisplay();
+		// 			break;
+		// case 't':	{
+		// 				GLint time = glutGet(GLUT_ELAPSED_TIME);
+		// 				cout << "starting speed test for 5 seconds...\n";
+		// 				GLint time2;
+		// 				GLint n = 0;
+		// 				while( (time2 = glutGet(GLUT_ELAPSED_TIME)) - time < 5000)
+		// 				{
+		// 					idle();
+		// 					display();
+		// 					n++;
+		// 				}
+		// 				cout << n << " frames in " << time2-time << "ms => "
+		// 					<< 1000*n/double(time2-time) << "fps\n";
+		// 			}
+		// 			break;
 		case 'p':	ExportPOV();
 					break;
 		case 'v':	ExportVertices();
@@ -236,19 +267,19 @@ static void key(unsigned char key,int,int)
 
 void ResizeDisplayTo(int w, int h)
 {
-	glutReshapeWindow(w,h);
+  //	glutReshapeWindow(w,h);
 }
 
 void SwapBuffers()
 {
 	// glutSwapBuffers();
-	glFlush();
-	glFinish(); 
+	// glFlush();
+	// glFinish(); 
 }
 
 void PostRedisplay()
 {
-	glutPostRedisplay();
+  //	glutPostRedisplay();
 }
 
 
@@ -272,10 +303,10 @@ int main(int argc, char **argv)
 	char *progname = "qugel";
 	char ** argv = &progname;
 #endif
-	glutInitWindowSize(sizeH,sizeV);
+	//glutInitWindowSize(sizeH,sizeV);
 
 #if !QUANTUM_TARGET_MAC
-	glutInit(&argc, argv);
+	//glutInit(&argc, argv);
 #endif
 #if QUANTUM_TARGET_MAC
 	SIOUXSettings.setupmenus = false;
@@ -294,10 +325,21 @@ int main(int argc, char **argv)
 		descriptionFile = argv[1];
 	else if(argc == 1)
 	{
-		cout << "Enter .qgl file to read: " << flush;
-		char buffer[4096];
-		cin.get(buffer,4095);
-		descriptionFile = buffer;
+	            // Write the text to the named file
+	  FILE *file = fopen("TempTextFile.qgl", "w");
+	  if (!file) {
+	    perror("Failed to create file");
+	    exit(EXIT_FAILURE);
+	  }
+	  fputs(example_text, file);
+	  fclose(file);
+	  // Original code to ask for filename
+
+		// cout << "Enter .qgl file to read: " << flush;
+		// char buffer[4096];
+		// cin.get(buffer,4095);
+		// descriptionFile = buffer;
+	  descriptionFile = "TempTextFile.qgl";
 	}
 	else
 	{
@@ -307,25 +349,25 @@ int main(int argc, char **argv)
 
 	cout << "Initializing OpenGL...\n";
 
-	glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH);
-	glutCreateWindow("QuantumGL");
+	// glutInitDisplayMode(GLUT_RGB | GLUT_SINGLE | GLUT_DEPTH);
+	// glutCreateWindow("QuantumGL");
 	
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutMotionFunc(motion);
-	glutMouseFunc(mouse1);
-	glutKeyboardFunc(key);
-	glutSpecialFunc(special);
-	glutIdleFunc(idle);
+	// glutDisplayFunc(display);
+	// glutReshapeFunc(reshape);
+	// glutMotionFunc(motion);
+	// glutMouseFunc(mouse1);
+	// glutKeyboardFunc(key);
+	// glutSpecialFunc(special);
+	// glutIdleFunc(idle);
 	
 #if QUANTUM_TARGET_MAC
 	SIOUXSettings.asktosaveonclose = false;
 #endif
 	
-	cout << "GL_VENDOR: " << (const char*) glGetString(GL_VENDOR) << endl;
-	cout << "GL_RENDERER: " << (const char*) glGetString(GL_RENDERER) << endl;
-	cout << "GL_VERSION: " << (const char*) glGetString(GL_VERSION) << endl;
-	cout << "GL_EXTENSIONS: " << (const char*) glGetString(GL_EXTENSIONS) << endl;
+	// cout << "GL_VENDOR: " << (const char*) glGetString(GL_VENDOR) << endl;
+	// cout << "GL_RENDERER: " << (const char*) glGetString(GL_RENDERER) << endl;
+	// cout << "GL_VERSION: " << (const char*) glGetString(GL_VERSION) << endl;
+	// cout << "GL_EXTENSIONS: " << (const char*) glGetString(GL_EXTENSIONS) << endl;
 	
 	AutoreleasePool::PushNewPool();
 	VisualObject::BSP = new BSPTree();
@@ -371,7 +413,8 @@ int main(int argc, char **argv)
 	
 		cout << "Entering main loop...\n";
 		UpdateVisualObjects();
-		glutMainLoop();
+		ExportVertices();
+		//glutMainLoop();
 	}
 	catch(DescError& e)
 	{

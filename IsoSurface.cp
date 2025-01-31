@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+//#include <OpenGL/gl.h>
 #include "IsoSurface.h"
 #include "CubeInfo.h"
 #include "CubeEdges.h"
@@ -43,9 +43,9 @@ IsoSurface::~IsoSurface()
 		thresholdExpr->DecRefCount();
 	if(displayListIndex != -1)
 	{
-		LockGL();
-		glDeleteLists(displayListIndex,1);
-		UnlockGL();
+		// LockGL();
+		// glDeleteLists(displayListIndex,1);
+		// UnlockGL();
 	}
 }
 
@@ -420,43 +420,43 @@ void IsoSurface::Draw(GLfloat camera[3], GLfloat light[3])
 		return;
 	if(displayListIndex == -1)
 	{
-		displayListIndex = glGenLists(1);	
+	  //		displayListIndex = glGenLists(1);	
 		displayListDirty = true;
 	}
 	if(displayListDirty)
 	{
 		displayListDirty = false;
 		
-		glNewList(displayListIndex,GL_COMPILE_AND_EXECUTE);
+		//glNewList(displayListIndex,GL_COMPILE_AND_EXECUTE);
 		
 			GLfloat mat_diffuse[] = { 1.0, 1.0, 0.0, /*0.5*/1 };
-			glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-			glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
-			SetupShininess();
+			// glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+			// glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+			// SetupShininess();
 				
 		//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//	glEnable(GL_BLEND);
-			glEnable(GL_COLOR_MATERIAL);
+		//	glEnable(GL_COLOR_MATERIAL);
 		//	glColor3f(1,0,0);
-			glEnable(GL_LIGHTING);
+			// glEnable(GL_LIGHTING);
 			
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
-			glEnableClientState(GL_VERTEX_ARRAY);
+			// glEnableClientState(GL_NORMAL_ARRAY);
+			// glEnableClientState(GL_COLOR_ARRAY);
+			// glEnableClientState(GL_VERTEX_ARRAY);
 		
-			glNormalPointer(GL_FLOAT,0,theNormals.x);
-			glColorPointer(3,GL_FLOAT,0,theColors.x);
-			glVertexPointer(3,GL_FLOAT,0,theVertices.x);
+			// glNormalPointer(GL_FLOAT,0,theNormals.x);
+			// glColorPointer(3,GL_FLOAT,0,theColors.x);
+			// glVertexPointer(3,GL_FLOAT,0,theVertices.x);
 		
-			glDrawElements(GL_TRIANGLES, theIndices.n, 
-						GL_UNSIGNED_INT, theIndices.x);
+			// glDrawElements(GL_TRIANGLES, theIndices.n, 
+			// 			GL_UNSIGNED_INT, theIndices.x);
 			
-			glDisableClientState(GL_NORMAL_ARRAY);
-			glDisableClientState(GL_VERTEX_ARRAY);
+			// glDisableClientState(GL_NORMAL_ARRAY);
+			// glDisableClientState(GL_VERTEX_ARRAY);
 				
-			glDisable(GL_LIGHTING);
+			// glDisable(GL_LIGHTING);
 
-			glDisable(GL_BLEND);
+			// glDisable(GL_BLEND);
 			
 			/*glPointSize(10.0);
 			glBegin(GL_POINTS);
@@ -477,11 +477,11 @@ void IsoSurface::Draw(GLfloat camera[3], GLfloat light[3])
 			}
 			glEnd();*/
 
-		glEndList();
+			//	glEndList();
 	}
 	else
 	{
-		glCallList(displayListIndex);
+	  //glCallList(displayListIndex);
 	}
 #endif
 }

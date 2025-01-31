@@ -1,12 +1,12 @@
-#include <OpenGL/gl.h>
+//#include <OpenGL/gl.h>
 #include "Flow.h"
 #include "PointList.h"
 #include "ExpressionEvaluator.h"
 #include "LockGL.h"
 #include "PredefinedVariables.h"
 
-#include GL_GL_H
-#include GL_GLU_H
+// #include GL_GL_H
+// #include GL_GLU_H
 
 #include <algorithm>
 #include <functional>
@@ -33,9 +33,9 @@ Flow::~Flow()
 	release(theStepsize);
 	if(lightingTextureObject)
 	{
-		LockGL();
-		glDeleteTextures(1,&lightingTextureObject);
-		UnlockGL();
+		// LockGL();
+		// glDeleteTextures(1,&lightingTextureObject);
+		// UnlockGL();
 	}
 }
 
@@ -66,89 +66,89 @@ void Flow::SetStepsize(CommonEvaluator *stepsize)
 
 void Flow::Draw(GLfloat camera[3], GLfloat light[3])
 {
-	assert(lightingTextureObject);
-#if 0
-	glBindTexture(GL_TEXTURE_1D,lightingTextureObject);
-#else
-	glBindTexture(GL_TEXTURE_2D,lightingTextureObject);
-#endif
+// 	assert(lightingTextureObject);
+// #if 0
+// 	glBindTexture(GL_TEXTURE_1D,lightingTextureObject);
+// #else
+// 	glBindTexture(GL_TEXTURE_2D,lightingTextureObject);
+// #endif
 	
-	GLfloat matrix[16];
-	GLfloat nCamera[3];
+// 	GLfloat matrix[16];
+// 	GLfloat nCamera[3];
 	
-	printf("camera: %10f %10f %10f\n",camera[0],camera[1],camera[2]);
-	printf("light:  %10f %10f %10f\n",light[0],light[1],light[2]);
+// 	printf("camera: %10f %10f %10f\n",camera[0],camera[1],camera[2]);
+// 	printf("light:  %10f %10f %10f\n",light[0],light[1],light[2]);
 
-/*	matrix[0] = light[0]*0.49;	matrix[4] = light[1]*0.49; matrix[8] = light[2]*0.49; matrix[12] = 0.5;
-	matrix[1] = 0;			matrix[5] = matrix[9]	= matrix[13] = 0;
-	matrix[2] = 0;			matrix[6] = matrix[10]	= matrix[14] = 0;
-	matrix[3] = 0;			matrix[7] = matrix[11]	= 0; matrix[15] = 1;*/
+// /*	matrix[0] = light[0]*0.49;	matrix[4] = light[1]*0.49; matrix[8] = light[2]*0.49; matrix[12] = 0.5;
+// 	matrix[1] = 0;			matrix[5] = matrix[9]	= matrix[13] = 0;
+// 	matrix[2] = 0;			matrix[6] = matrix[10]	= matrix[14] = 0;
+// 	matrix[3] = 0;			matrix[7] = matrix[11]	= 0; matrix[15] = 1;*/
 
-/*	matrix[0] = light[0]/2;	matrix[4] = matrix[8]	= matrix[12] = 0;
-	matrix[1] = light[1]/2;	matrix[5] = matrix[9]	= matrix[13] = 0;
-	matrix[2] = light[2]/2;	matrix[6] = matrix[10]	= matrix[14] = 0;
-	matrix[3] = 0.5;		matrix[7] = matrix[11]	= 0; matrix[15] = 1;*/
+// /*	matrix[0] = light[0]/2;	matrix[4] = matrix[8]	= matrix[12] = 0;
+// 	matrix[1] = light[1]/2;	matrix[5] = matrix[9]	= matrix[13] = 0;
+// 	matrix[2] = light[2]/2;	matrix[6] = matrix[10]	= matrix[14] = 0;
+// 	matrix[3] = 0.5;		matrix[7] = matrix[11]	= 0; matrix[15] = 1;*/
 	
-	{
-		GLfloat ilen = 1/sqrt(camera[0]*camera[0] + camera[1]*camera[1] + camera[2]*camera[2]);
-		nCamera[0] = camera[0] * ilen;
-		nCamera[1] = camera[1] * ilen;
-		nCamera[2] = camera[2] * ilen;
-	}
+// 	{
+// 		GLfloat ilen = 1/sqrt(camera[0]*camera[0] + camera[1]*camera[1] + camera[2]*camera[2]);
+// 		nCamera[0] = camera[0] * ilen;
+// 		nCamera[1] = camera[1] * ilen;
+// 		nCamera[2] = camera[2] * ilen;
+// 	}
 	
-	matrix[0] = light[0] * 0.49;	matrix[4] = light[1]*0.49;		matrix[8] = light[2]*0.49; matrix[12] = 0.5;
-	matrix[1] = nCamera[0] * 0.49;	matrix[5] = nCamera[1]*0.49;	matrix[9] = nCamera[2]*0.49; matrix[13] = 0.5;
-	matrix[2] = 0;	matrix[6] = matrix[10]	= matrix[14] = 0;
-	matrix[3] = 0;		matrix[7] = matrix[11]	= 0; matrix[15] = 1;
+// 	matrix[0] = light[0] * 0.49;	matrix[4] = light[1]*0.49;		matrix[8] = light[2]*0.49; matrix[12] = 0.5;
+// 	matrix[1] = nCamera[0] * 0.49;	matrix[5] = nCamera[1]*0.49;	matrix[9] = nCamera[2]*0.49; matrix[13] = 0.5;
+// 	matrix[2] = 0;	matrix[6] = matrix[10]	= matrix[14] = 0;
+// 	matrix[3] = 0;		matrix[7] = matrix[11]	= 0; matrix[15] = 1;
 	
-#define MATRIX_LIGHT 0
+// #define MATRIX_LIGHT 0
 	
-	glMatrixMode(GL_TEXTURE);
-	glPushMatrix();
-#if MATRIX_LIGHT
-	glLoadMatrixf(matrix);
-#endif
-#if 0
-	glEnable(GL_TEXTURE_1D);
-	glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-#else
-	// ### HACK ### glEnable(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
+// 	glMatrixMode(GL_TEXTURE);
+// 	glPushMatrix();
+// #if MATRIX_LIGHT
+// 	glLoadMatrixf(matrix);
+// #endif
+// #if 0
+// 	glEnable(GL_TEXTURE_1D);
+// 	glTexParameteri(GL_TEXTURE_1D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+// #else
+// 	// ### HACK ### glEnable(GL_TEXTURE_2D);
+// 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP);
+// 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP);
 	
-	glTexEnvi(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-#endif
-	//glLineWidth(2);
-	vector<Line>::iterator p = lines.begin(), e = lines.end();
-	while(p != e)
-#if MATRIX_LIGHT
-		(p++)->Draw();
-#else
-		(p++)->Draw(nCamera,light);
-#endif	
+// 	glTexEnvi(GL_TEXTURE_2D,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+// #endif
+// 	//glLineWidth(2);
+// 	vector<Line>::iterator p = lines.begin(), e = lines.end();
+// 	while(p != e)
+// #if MATRIX_LIGHT
+// 		(p++)->Draw();
+// #else
+// 		(p++)->Draw(nCamera,light);
+// #endif	
 		
-	glPopMatrix();
+// 	glPopMatrix();
 
-	if(0){
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
-		glDisable(GL_LIGHTING);
-		glColor3f(1,1,1);
-		glBegin(GL_QUADS);
-			glTexCoord2f(0,0);
-			glVertex3f(-1,-1,-1);
-			glTexCoord2f(1,0);
-			glVertex3f(1,-1,-1);
-			glTexCoord2f(1,1);
-			glVertex3f(1,1,-1);
-			glTexCoord2f(0,1);
-			glVertex3f(-1,1,-1);
-		glEnd();
-		glPopAttrib();
-	}
+// 	if(0){
+// 		glPushAttrib(GL_ALL_ATTRIB_BITS);
+// 		glDisable(GL_LIGHTING);
+// 		glColor3f(1,1,1);
+// 		glBegin(GL_QUADS);
+// 			glTexCoord2f(0,0);
+// 			glVertex3f(-1,-1,-1);
+// 			glTexCoord2f(1,0);
+// 			glVertex3f(1,-1,-1);
+// 			glTexCoord2f(1,1);
+// 			glVertex3f(1,1,-1);
+// 			glTexCoord2f(0,1);
+// 			glVertex3f(-1,1,-1);
+// 		glEnd();
+// 		glPopAttrib();
+// 	}
 	
-	glDisable(GL_TEXTURE_1D);
-	glDisable(GL_TEXTURE_2D);
-	glMatrixMode(GL_MODELVIEW);
+// 	glDisable(GL_TEXTURE_1D);
+// 	glDisable(GL_TEXTURE_2D);
+// 	glMatrixMode(GL_MODELVIEW);
 }
 
 void Flow::Build()
@@ -164,70 +164,70 @@ void Flow::Build()
 
 void Flow::BuildGLObjects1()
 {
-	if(!lightingTextureObject)
-		glGenTextures(1,&lightingTextureObject);
-#if 0
-	glBindTexture(GL_TEXTURE_1D,lightingTextureObject);
+// 	if(!lightingTextureObject)
+// 		glGenTextures(1,&lightingTextureObject);
+// #if 0
+// 	glBindTexture(GL_TEXTURE_1D,lightingTextureObject);
 	
-	unsigned char tex[256];
-	const float diffuse = 0.9, ambient = 0.1;
+// 	unsigned char tex[256];
+// 	const float diffuse = 0.9, ambient = 0.1;
 	
-	for(int i=0;i<256;i++)
-	{
-		float t1 = i/255.0;
-		float intensity = ambient+diffuse*sqrt(1-(2*t1-1)*(2*t1-1));
-		tex[i] = (unsigned char) (intensity * 255);
-		//tex[i] = i;
-	}
+// 	for(int i=0;i<256;i++)
+// 	{
+// 		float t1 = i/255.0;
+// 		float intensity = ambient+diffuse*sqrt(1-(2*t1-1)*(2*t1-1));
+// 		tex[i] = (unsigned char) (intensity * 255);
+// 		//tex[i] = i;
+// 	}
 	
-	glTexImage1D(GL_TEXTURE_1D,0,GL_LUMINANCE,256,0,GL_LUMINANCE,GL_UNSIGNED_BYTE,tex);
-#else
-	glBindTexture(GL_TEXTURE_2D,lightingTextureObject);
+// 	glTexImage1D(GL_TEXTURE_1D,0,GL_LUMINANCE,256,0,GL_LUMINANCE,GL_UNSIGNED_BYTE,tex);
+// #else
+// 	glBindTexture(GL_TEXTURE_2D,lightingTextureObject);
 	
-	unsigned char tex[256][256];
+// 	unsigned char tex[256][256];
 	
-	float k_a = ambientVar->value;
-	const float k_d = 1-k_a, k_s = 1;
-	number shininess = -1;
+// 	float k_a = ambientVar->value;
+// 	const float k_d = 1-k_a, k_s = 1;
+// 	number shininess = -1;
 	
-	if(shininessExpr)
-		shininessExpr -> EvaluateReal(1,&shininess);
-	printf("build\n");
-	for(int j=0;j<256;j++)
-	{
-		float t2 = j/255.0;		// t2 == 1/2 (V.T + 1)
-		for(int i=0;i<256;i++)
-		{
-			float t1 = i/255.0;	// t1 == 1/2 (L.T + 1)
+// 	if(shininessExpr)
+// 		shininessExpr -> EvaluateReal(1,&shininess);
+// 	printf("build\n");
+// 	for(int j=0;j<256;j++)
+// 	{
+// 		float t2 = j/255.0;		// t2 == 1/2 (V.T + 1)
+// 		for(int i=0;i<256;i++)
+// 		{
+// 			float t1 = i/255.0;	// t1 == 1/2 (L.T + 1)
 			
-			// I = k_a + k_d * L.N + k_s * (V.R)^n
-			// L ... vertex to light, unit
-			// N ... normal vector
-			// R ... reflected light vector
-			// n ... shininess
+// 			// I = k_a + k_d * L.N + k_s * (V.R)^n
+// 			// L ... vertex to light, unit
+// 			// N ... normal vector
+// 			// R ... reflected light vector
+// 			// n ... shininess
 
-			// I = k_a + k_d * sqrt(1-(L.T)^2) + k_s * ((L.T)(V.T) - sqrt(1-(L.T)^2)*sqrt(1-(V.T)^2))^n
+// 			// I = k_a + k_d * sqrt(1-(L.T)^2) + k_s * ((L.T)(V.T) - sqrt(1-(L.T)^2)*sqrt(1-(V.T)^2))^n
 			
-			// T ... tangent
+// 			// T ... tangent
 			
-			float LT = 2*t1 - 1;
-			float VT = 2*t2 - 1;
+// 			float LT = 2*t1 - 1;
+// 			float VT = 2*t2 - 1;
 			
-			float diffuse = sqrt(1-LT*LT);
-			float specular = shininess >= 0 ? pow(LT*VT-sqrt((1-LT*LT)*(1-VT*VT)),shininess) : 0;
+// 			float diffuse = sqrt(1-LT*LT);
+// 			float specular = shininess >= 0 ? pow(LT*VT-sqrt((1-LT*LT)*(1-VT*VT)),shininess) : 0;
 			
-			float intensity = k_a + k_d*diffuse + k_s * specular;
+// 			float intensity = k_a + k_d*diffuse + k_s * specular;
 			
-			if(intensity > 1)
-				intensity = 1;
+// 			if(intensity > 1)
+// 				intensity = 1;
 			
-			//tex[j][i] = (unsigned char) (intensity * 255);
-			//tex[j][i] = (i%2) == (j%2) ? 255 : 0;//###
-			tex[j][i] = 0;
-		}
-	}
-	glTexImage2D(GL_TEXTURE_2D,0,GL_LUMINANCE,256,256,0,GL_LUMINANCE,GL_UNSIGNED_BYTE,tex);
-#endif
+// 			//tex[j][i] = (unsigned char) (intensity * 255);
+// 			//tex[j][i] = (i%2) == (j%2) ? 255 : 0;//###
+// 			tex[j][i] = 0;
+// 		}
+// 	}
+// 	glTexImage2D(GL_TEXTURE_2D,0,GL_LUMINANCE,256,256,0,GL_LUMINANCE,GL_UNSIGNED_BYTE,tex);
+// #endif
 }
 
 static void normvec(number vec[3])
@@ -362,77 +362,77 @@ void Flow::Line::Build(Flow *flow, vecR3 startingPoint)
 
 void Flow::Line::Draw(GLfloat *camera, GLfloat *light)
 {
-	glBegin(GL_LINE_STRIP);
-	vector<vecR3>::iterator p,c,t,e;
+// 	glBegin(GL_LINE_STRIP);
+// 	vector<vecR3>::iterator p,c,t,e;
 	
-	p = points.begin();
-	c = colors.begin();
-	t = tangents.begin();
-	e = points.end();
+// 	p = points.begin();
+// 	c = colors.begin();
+// 	t = tangents.begin();
+// 	e = points.end();
 	
-	/* ### HACK ### */
-	float k_a = ambientVar->value;
-	const float k_d = 1-k_a, k_s = 1;
-	number shininess = -1;
+// 	/* ### HACK ### */
+// 	float k_a = ambientVar->value;
+// 	const float k_d = 1-k_a, k_s = 1;
+// 	number shininess = -1;
 	
-	if(flow->shininessExpr)
-		flow->shininessExpr -> EvaluateReal(1,&shininess);
-	/* ### HACK ### */
+// 	if(flow->shininessExpr)
+// 		flow->shininessExpr -> EvaluateReal(1,&shininess);
+// 	/* ### HACK ### */
 
-	while(p != e)
-	{
-		vecR3 point = *p++;
-		vecR3 color = *c++;
-		vecR3 tangent = *t++;
-		glColor3f(color.x,color.y,color.z);
-		if(light)
-		{
-			//printf("%g,%g\n",(tangent.x*light[0] + tangent.y*light[1] + tangent.z*light[2])/2+0.5,
-			//			(tangent.x*camera[0] + tangent.y*camera[1] + tangent.z*camera[2])/2+0.5);
-			//glTexCoord2f((tangent.x*light[0] + tangent.y*light[1] + tangent.z*light[2])/2+0.5,
-			//			(tangent.x*camera[0] + tangent.y*camera[1] + tangent.z*camera[2])/2+0.5);
+// 	while(p != e)
+// 	{
+// 		vecR3 point = *p++;
+// 		vecR3 color = *c++;
+// 		vecR3 tangent = *t++;
+// 		glColor3f(color.x,color.y,color.z);
+// 		if(light)
+// 		{
+// 			//printf("%g,%g\n",(tangent.x*light[0] + tangent.y*light[1] + tangent.z*light[2])/2+0.5,
+// 			//			(tangent.x*camera[0] + tangent.y*camera[1] + tangent.z*camera[2])/2+0.5);
+// 			//glTexCoord2f((tangent.x*light[0] + tangent.y*light[1] + tangent.z*light[2])/2+0.5,
+// 			//			(tangent.x*camera[0] + tangent.y*camera[1] + tangent.z*camera[2])/2+0.5);
 			
-				// HACK: don't use textures
-			float t1 = (tangent.x*light[0] + tangent.y*light[1] + tangent.z*light[2])/2+0.5;
-			float t2 = (tangent.x*camera[0] + tangent.y*camera[1] + tangent.z*camera[2])/2+0.5;
-			float LT = 2*t1 - 1;
-			float VT = 2*t2 - 1;
+// 				// HACK: don't use textures
+// 			float t1 = (tangent.x*light[0] + tangent.y*light[1] + tangent.z*light[2])/2+0.5;
+// 			float t2 = (tangent.x*camera[0] + tangent.y*camera[1] + tangent.z*camera[2])/2+0.5;
+// 			float LT = 2*t1 - 1;
+// 			float VT = 2*t2 - 1;
 			
-			float diffuse = sqrt(1-LT*LT);
-			float specular = shininess >= 0 ? pow(LT*VT-sqrt((1-LT*LT)*(1-VT*VT)),shininess) : 0;
+// 			float diffuse = sqrt(1-LT*LT);
+// 			float specular = shininess >= 0 ? pow(LT*VT-sqrt((1-LT*LT)*(1-VT*VT)),shininess) : 0;
 			
-#if 0			
-			float intensity = k_a + k_d*diffuse + k_s * specular;
-			if(intensity > 1)
-				intensity = 1;
-			glColor3f(color.x * intensity,color.y * intensity,color.z * intensity);
-#elif 1
-			float red = color.x * (k_a + k_d * diffuse + k_s * specular);
-			float green = color.y * (k_a + k_d * diffuse + k_s * specular);
-			float blue = color.z * (k_a + k_d * diffuse + k_s * specular);
+// #if 0			
+// 			float intensity = k_a + k_d*diffuse + k_s * specular;
+// 			if(intensity > 1)
+// 				intensity = 1;
+// 			glColor3f(color.x * intensity,color.y * intensity,color.z * intensity);
+// #elif 1
+// 			float red = color.x * (k_a + k_d * diffuse + k_s * specular);
+// 			float green = color.y * (k_a + k_d * diffuse + k_s * specular);
+// 			float blue = color.z * (k_a + k_d * diffuse + k_s * specular);
 
-			if(red > 1) red = 1;
-			if(green > 1) green = 1;
-			if(blue > 1) blue = 1;
+// 			if(red > 1) red = 1;
+// 			if(green > 1) green = 1;
+// 			if(blue > 1) blue = 1;
 
-			glColor3f(red,green,blue);
-#else
-			float red = color.x * (k_a + k_d * diffuse) + k_s * specular;
-			float green = color.y * (k_a + k_d * diffuse) + k_s * specular;
-			float blue = color.z * (k_a + k_d * diffuse) + k_s * specular;
+// 			glColor3f(red,green,blue);
+// #else
+// 			float red = color.x * (k_a + k_d * diffuse) + k_s * specular;
+// 			float green = color.y * (k_a + k_d * diffuse) + k_s * specular;
+// 			float blue = color.z * (k_a + k_d * diffuse) + k_s * specular;
 
-			if(red > 1) red = 1;
-			if(green > 1) green = 1;
-			if(blue > 1) blue = 1;
+// 			if(red > 1) red = 1;
+// 			if(green > 1) green = 1;
+// 			if(blue > 1) blue = 1;
 
-			glColor3f(red,green,blue);
-#endif
-		}
-		else
-			glTexCoord3f(tangent.x,tangent.y,tangent.z);
-		glVertex3f(point.x,point.y,point.z);
-	}
-	glEnd();
+// 			glColor3f(red,green,blue);
+// #endif
+// 		}
+// 		else
+// 			glTexCoord3f(tangent.x,tangent.y,tangent.z);
+// 		glVertex3f(point.x,point.y,point.z);
+// 	}
+// 	glEnd();
 }
 
 void Flow::AmbientWatcher::VariableChanged(RealVariable *var)

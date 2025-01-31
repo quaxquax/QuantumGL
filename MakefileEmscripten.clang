@@ -7,21 +7,16 @@ CXX = emcc
 COPTS = -I. -g -frtti -fpermissive
 
 EMSCRIPTEN_OPTS = \
-    -I/Users/quax/projects/gl4es/include \
-    -L/Users/quax/projects/gl4es/lib \
+    -I/usr/local/include \
     -s WASM=1 \
-    -s MAX_WEBGL_VERSION=1 \
+    -s USE_WEBGL2=1 \
+    -s FULL_ES3=1 \
     -s ALLOW_MEMORY_GROWTH=1 \
+    -s STACK_SIZE=100MB \
     -s TOTAL_MEMORY=512MB \
+    -s FORCE_FILESYSTEM \
     -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' \
-    --use-port=sdl2 \
-    -s USE_SDL=2 \
-    -s USE_GLFW=3 \
-    -s GL_UNSAFE_OPTS=0 \
-    -s ASSERTIONS=1 \
-    -s GL_EMULATE_GLES_VERSION_STRING_FORMAT=1 \
-    -s LEGACY_GL_EMULATION=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
-    -ferror-limit=0 -std=c++11 -fPIE -stdlib=libc++ -lglut -lGL 
+    -ferror-limit=0 -std=c++11  -stdlib=libc++ 
 
 SRCS=\
 	AbsEvaluator.cp\
