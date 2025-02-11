@@ -2,7 +2,6 @@
 #include "VisualObject.h"
 #include "ExpressionEvaluator.h"
 #include "BSPTree.h"
-#include "LockGL.h"
 
 #include <iostream>
 using namespace std;
@@ -18,7 +17,7 @@ VisualObject::VisualObject()
 	//transparencyWatcher.obj = this;
 	glObjectsDirty = false;
 }
-
+ 
 VisualObject::~VisualObject()
 {
 	if(colorFunction)
@@ -93,7 +92,31 @@ void VisualObject::OutputSolidVertices(ostream& out)
 {
 	out << "#warning \"object type not supported for Vertex export.\"" << endl;
 }
+void VisualObject::GetVertices(std::vector<float> &arr, int size)
+{
  
+}
+// void    GetVerticesByTransparency(float *SolidVertices, float *TransparentVertices, int SVsize, int TVsize)
+// {
+  
+// }
+int VisualObject::CountVertices()
+{
+  int count=0;
+  return count;
+}
+int VisualObject::CountSolidVertices()
+{
+  int count=0;
+  return count;
+}
+int VisualObject::CountTransparentVertices()
+{
+  int count=0;
+  return count;
+}
+
+
 bool VisualObject::GetRecommendedBSPResolution(vecN3& res)
 {
 	return false;
@@ -153,15 +176,10 @@ void VisualObject::SetGLObjectsDirty()
 
 void VisualObject::BuildGLObjects()
 {
-	if(glObjectsDirty)
-	{
-		LockGL();
-		BuildGLObjects1();
-		UnlockGL();
-	}
-	glObjectsDirty = false;
+  // Not building GL objects anymore
 }
 
 void VisualObject::BuildGLObjects1()
 {
 }
+  

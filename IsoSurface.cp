@@ -550,6 +550,11 @@ static void outArrVec(ostream& out,vecR3 vec)
 {
   out << vec.x << ',' << vec.y << ',' << vec.z << ',';
 }
+static void getVecVal(std::vector<float> &arr, vecR3 vec)
+{
+  std::vector<float >  myVec={vec.x,vec.y,vec.z};
+  copy(myVec.begin(), myVec.end(), back_inserter(arr));
+}
 
 static void outPOVVec(ostream& out,vecR3 vec)
 {
@@ -596,6 +601,7 @@ void IsoSurface::OutputSolidVertices(ostream& out)
 	
 	for(int i=0;i<theIndices.n;i+=3)
 	{
+	  
 		int idx1 = theIndices.x[i];
 		int idx2 = theIndices.x[i+1];
 		int idx3 = theIndices.x[i+2];
@@ -611,7 +617,84 @@ void IsoSurface::OutputSolidVertices(ostream& out)
 		    << theColors.x[idx1].z << ',' << alpha << ",\n";
 	}
 }
+void IsoSurface::GetVertices(std::vector<float> &arr, int size)
+{
+  //cout << "Array size to populate: " << size <<",\n";
+  //cout << "theIndices.n: " << theIndices.n << "\n";
 
+  number trans;
+  if(transparencyExpr)
+    transparencyExpr->EvaluateReal(1,&trans);
+  else
+    trans = 0;
+  float alpha = 1-trans;
+
+  // Populating array logic
+  for(int i=0;i<theIndices.n;i+=3)
+    {
+      bool diagnostic=false;
+      // if (i+10>theIndices.n) 
+      // 	diagnostic=true;
+      // else
+      // 	diagnostic=false;
+      
+      // Temp vector for vertice values of one triangle (with same color).
+      std::vector<float > myV;
+
+      int idx1 = theIndices.x[i];
+      int idx2 = theIndices.x[i+1];
+      int idx3 = theIndices.x[i+2];
+
+      //Getting the vertices for one triangle
+      getVecVal(myV,theVertices.x[idx1]);
+      getVecVal(myV,theColors.x[idx1]);
+      myV.push_back(alpha);
+
+      getVecVal(myV,theVertices.x[idx2]);
+      getVecVal(myV,theColors.x[idx1]);
+      myV.push_back(alpha);
+
+      getVecVal(myV,theVertices.x[idx3]);
+      getVecVal(myV,theColors.x[idx1]);
+      myV.push_back(alpha);
+
+      if (diagnostic) {
+	cout << "Trig " << i << " :,\n";
+	for (int j = 0; j < 21; j++){
+	  cout << myV[j] << ',' ;
+	  if (!((j+1) % 7))
+	    cout << '\n';
+	}
+	cout << "\n********** Trig done. ********" << ",\n";
+	if (i==99)
+	  break;
+      }
+      //Populating the array that was given to us via reference
+      copy(myV.begin(), myV.end(), back_inserter(arr));
+    }
+}
+int IsoSurface::CountVertices()
+{
+   return 7*theIndices.n; 
+}
+int IsoSurface::CountSolidVertices()
+{
+  if(transparencyExpr)
+    return 0;
+  int vCount=0;
+   for(int i=0;i<theIndices.n;i+=3)
+    vCount++;
+   return 3*vCount; 
+}
+int IsoSurface::CountTransparentVertices()
+{
+  if(!transparencyExpr)
+    return 0;
+  int vCount=0;
+   for(int i=0;i<theIndices.n;i+=3)
+    vCount++;
+   return 3*vCount; 
+}
 void IsoSurface::OutputPOV(ostream& out)
 {
 	number trans;
