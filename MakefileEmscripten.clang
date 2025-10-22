@@ -16,7 +16,11 @@ EMSCRIPTEN_OPTS = \
     -s TOTAL_MEMORY=512MB \
     -s FORCE_FILESYSTEM \
     -s EXPORTED_RUNTIME_METHODS='["ccall", "cwrap"]' \
-    -ferror-limit=0 -std=c++11  -stdlib=libc++ 
+    -s MODULARIZE=1 \
+    -s 'EXPORT_NAME="Textcopy"' \
+    -s USE_ES6_IMPORT_META=0 \
+    --shell-file=testcanvas.html \
+    --bind -ferror-limit=0 -std=c++11  -stdlib=libc++ 
 
 SRCS=\
 	AbsEvaluator.cp\

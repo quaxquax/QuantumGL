@@ -1,5 +1,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
+#include <typeinfo>
+#include <string>
+
 #include "QuantumConfig.h"
 #include "QuantumFrontend.h"
 #include "QuantumProgress.h"
@@ -20,10 +23,12 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include <time.h>
+#include <emscripten/bind.h>
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <stdio.h>
 #include <cmath>
+#include <string>
 #include <iostream>
 #include "shader_s.h"
 
@@ -35,6 +40,61 @@
 //#include GL_GLUT_H
 #include <iostream>
 #include <fstream>
+
+//using namespace std;
+
+// Declare the print functions that will be implemented in JavaScript
+EM_JS(void, printToOutput, (const char* str), {
+    const outputTextarea = document.getElementById('output');
+    outputTextarea.value += UTF8ToString(str);
+});
+
+// Custom streambuf that redirects to our JavaScript function
+class EmscriptenStreambuf : public std::streambuf {
+protected:
+    virtual int_type overflow(int_type c = traits_type::eof()) {
+        if (c != traits_type::eof()) {
+            char str[2] = {static_cast<char>(c), '\0'};
+            printToOutput(str);
+        }
+        return c;
+    }
+};
+
+bool click_event=0;
+// Global variable to hold text from user input
+char * user_input = new char[65546]();
+
+class TextProcessor {
+public:
+    TextProcessor() {
+        // Set up custom stream buffers
+        std::cout.rdbuf(&coutbuf);
+        std::cerr.rdbuf(&cerrbuf);
+    }
+
+    std::string processText(const std::string& input) {
+        // Example of using stdout and stderr
+        std::cout << "Processing input text of length: " << input.length() << std::endl;
+        std::cerr << "Variable type of the webform input: \n" << std::endl;
+	std::cerr << typeid(input).name() << std::endl;
+	click_event=1;
+	strcpy(user_input, input.c_str());
+        return user_input;
+    }
+
+private:
+    EmscriptenStreambuf coutbuf;
+    EmscriptenStreambuf cerrbuf;
+};
+
+using namespace emscripten;
+
+EMSCRIPTEN_BINDINGS(text_processor) {
+    class_<TextProcessor>("TextProcessor")
+        .constructor<>()
+        .function("processText", &TextProcessor::processText);
+}
 
 using namespace std;
 
@@ -110,7 +170,8 @@ void main()
    "slice z = zpos color complex_to_RGB(theData, colormapR) framed transparency slicetransp;\n";
 
 // OpenGL context and rendering state
-struct {
+
+struct MyState {
   GLuint shaderProgram;
   GLuint SolidVAO;
   GLuint SolidVBO;
@@ -124,12 +185,25 @@ struct {
   glm::mat4 view;
   glm::mat4 projection;
   glm::mat4 rotation;
-} state;
+};
+
+MyState state={};
 
 int angle = 0;
 int t0 = time(NULL);
 
-
+const string pseudoFileCreation(const char *example_text) {
+  const char *myFilename="TempTextFile.qgl";
+  // Write the text to the named file
+  FILE *file = fopen(myFilename, "w");
+  if (!file) {
+    perror("Failed to create file");
+    exit(EXIT_FAILURE);
+  }
+  fputs(example_text, file);
+  fclose(file);
+  return myFilename;
+}
 
 definedRealVariablesMap::iterator currentVar;
 bool showDrawing = false;
@@ -349,15 +423,19 @@ void mainLoop() {
     // float greenValue = (sin(t) / 2.0f) + 0.5f;
     // int vertexColorLocation = glGetUniformLocation(state.shaderProgram, "ourColor");
     // Start rotation with a delay
-    if (t>2)
+
+    if (t>2 && !click_event)
       {
 	unsigned int rotationLoc = glGetUniformLocation(state.shaderProgram, "rotation");
 	glUseProgram(state.shaderProgram);
 	glUniformMatrix4fv(rotationLoc, 1, GL_FALSE, glm::value_ptr(state.rotation));
 	angle++;
 	state.rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle/(20.0f)), glm::vec3(0.0, 0.0, 1.0));
-      }
+	//descriptionFile=pseudoFileCreation(example_text);
 
+      }
+    
+      
     // Draw the triangle
     glBindVertexArray(state.SolidVAO);
     //glDrawArrays(GL_POINTS, 0, 3);
@@ -367,12 +445,11 @@ void mainLoop() {
     //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     //Wirframe mode can't be switched on with glPolygonMode in WebGL, but this will work instead
     //glDrawElements(GL_LINE_LOOP, 6, GL_UNSIGNED_INT, 0);
-
+    
     glDrawArrays(GL_TRIANGLES, 0, state.numSolidVertices);
-
+    
     glBindVertexArray(state.TransparentVAO);
     glDrawArrays(GL_TRIANGLES, 0, state.numTransparentVertices);
-
     
     // glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 }
@@ -406,6 +483,159 @@ void SwapBuffers()
 
 void PostRedisplay()
 {
+}
+
+// Name of a pseudo file so that we can use the legacy code with minimal change.
+string descriptionFile;
+
+void ShaderAndVerticesCreation()
+{
+  // Set to true for some debug info
+  bool diagnostic=true;
+
+  extern FILE* yyin;
+  extern int yyparse();
+	
+  yyin = fopen(descriptionFile.c_str(),"r");
+  if(yyin == NULL)
+    {
+      cout << "Description file \"" << descriptionFile << "\" could not be opened.\n";
+    }
+
+  curPosition.line = 1;
+	
+  volatile bool error = false;
+  try
+    {
+      // Parsing of instructions
+      yyparse();
+      PrintReferenceCountingStatistics();
+      AutoreleasePool::FlushCurrentPool();
+      PrintReferenceCountingStatistics();
+	  
+      DetermineWorldSize();
+	  
+      currentVar = definedRealVariables.begin();
+	  
+      //cout << "Entering main loop...\n";
+      UpdateVisualObjects();
+      int numV;
+      numV=NumberOfVerticeElements();
+      //state.numSolidVertices=NumberOfSolidVertices();
+      //state.numTransparentVertices=NumberOfTransparentVertices();
+
+      //std::vector<float > allVertices(numV);
+      std::vector<float > allVertices;
+      //float mySolidVertices[7*state.numSolidVertices];
+      //float myTransparentVertices[7*state.numTransparentVertices];
+      //float allVertices[numV];
+
+      // std::cout << "Received number of vertices: " << numV << std::endl;	  
+	  
+      AcquireVertices(allVertices,numV);
+      if (diagnostic) {
+	cout << "Some semi-transparent vertices: \n"<< std::endl;;
+	for(int i=0;i<100;i++)
+	  {
+	    cout << state.TransparentVertices[i] << ',' ;
+	    if (!((i+1) % 7))
+	      cout << '\n';    
+	  }
+	cout << "Next Array .. \n"<< std::endl;;
+	cout << "Some solid vertices: \n"<< std::endl;;    
+	for(int i=0;i<100;i++)
+	  {
+	    cout << state.SolidVertices[i] << ',' ;
+	    if (!((i+1) % 7))
+	      cout << '\n';    
+	  }
+      }
+      cout << "\nNumber of solid vertice elements: " << state.TransparentVertices.size() << ",\n";
+      cout << "\nNumber of semi-transparent vertix elements: " << state.SolidVertices.size() << ",\n";
+      state.numSolidVertices = state.SolidVertices.size() / 7;
+      state.numTransparentVertices = state.TransparentVertices.size() / 7;
+	  
+      // This uses the utility Shader object defined in shader_s.h
+      // Compiles and loads the shader into the VRAM
+      Shader myShader(vertexShaderSource, fragmentShaderSource);
+
+      // The order here is critically important for emscripten
+      // The VAO glBindVertexArray has to happen before the binding of attribute and element buffers 
+      // Create and bind Vertex Array Object for Solid Vertices
+      glGenVertexArrays(1, &state.SolidVAO);
+      glBindVertexArray(state.SolidVAO);
+	  
+      // Create and bind Vertex Buffer Object
+      glGenBuffers(1, &state.SolidVBO);
+	  
+      glBindBuffer(GL_ARRAY_BUFFER, state.SolidVBO);    
+      glBufferData(GL_ARRAY_BUFFER, sizeof(float) * state.SolidVertices.size(), &state.SolidVertices[0], GL_STATIC_DRAW);
+	  
+      // position attribute
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+      glEnableVertexAttribArray(0);
+      // color attribute
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3* sizeof(float)));
+      glEnableVertexAttribArray(1);
+      // transperancy attribute
+      glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6* sizeof(float)));
+      glEnableVertexAttribArray(2);   
+	  
+      // Create and bind Vertex Array Object for semi-transparent Vertices
+      glGenVertexArrays(1, &state.TransparentVAO);
+      glBindVertexArray(state.TransparentVAO);
+	  
+      // Create and bind Vertex Buffer Object
+      glGenBuffers(1, &state.TransparentVBO);
+    
+      glBindBuffer(GL_ARRAY_BUFFER, state.TransparentVBO);    
+      glBufferData(GL_ARRAY_BUFFER, sizeof(float) * state.TransparentVertices.size(), &state.TransparentVertices.front(), GL_STATIC_DRAW);
+
+      // position attribute
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
+      glEnableVertexAttribArray(0);
+      // color attribute
+      glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3* sizeof(float)));
+      glEnableVertexAttribArray(1);
+      // transperancy attribute
+      glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6* sizeof(float)));
+      glEnableVertexAttribArray(2);   	  
+
+      // create transformations
+      state.model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+      state.view          = glm::mat4(1.0f);
+      state.projection    = glm::mat4(1.0f);
+      state.model = glm::rotate(state.model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+      state.view  = glm::translate(state.view, glm::vec3(0.0f, 0.0f, -3.0f));
+      state.projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+	  
+    
+      state.rotation = glm::mat4(1.0f);
+
+      // Set rendering loop
+    
+      state.shaderProgram = myShader.ID;
+
+      std::cout << "Matrix: " << glm::to_string(state.rotation) << std::endl;
+    }
+  catch(DescError& e)
+    {
+      cout << "********* ERROR ********\n";
+      cout << e.message << endl;
+      cout << "line " << e.pos.line << endl;
+      error = true;
+    }
+  catch(exception& e)
+    {
+      cout << "*********** EXCEPTION ***********\n";
+      cout << e.what() << endl;
+      error = true;
+    }
+  catch(...)
+    {
+      cout << "********* UNEXPECTED EXCEPTION ********\n";
+      error = true;
+    }
 }
 
 
@@ -450,35 +680,14 @@ int main(int argc, char **argv)
 	SIOUXSettings.autocloseonquit = true;//false;
 #endif
 
-	string descriptionFile;
-	if(argc == 2)
-		descriptionFile = argv[1];
-	else if(argc == 1)
-	{
-	            // Write the text to the named file
-	  FILE *file = fopen("TempTextFile.qgl", "w");
-	  if (!file) {
-	    perror("Failed to create file");
-	    exit(EXIT_FAILURE);
-	  }
-	  fputs(example_text, file);
-	  fclose(file);
-	  // Original code to ask for filename
+	//	string descriptionFile;
 
-		// cout << "Enter .qgl file to read: " << flush;
-		// char buffer[4096];
-		// cin.get(buffer,4095);
-		// descriptionFile = buffer;
-	  descriptionFile = "TempTextFile.qgl";
-	}
-	else
-	{
-		cerr << "Usage: " << argv[0] << " [filename.qgl]\n";
-		return 1;
-	}
-
+	// Writes the text to a pseudo file so that we can use the legacy code with minimal change.
+	descriptionFile=pseudoFileCreation(example_text);
+	
 	cout << "Initializing OpenGL...\n";
 
+		
 #if QUANTUM_TARGET_MAC
 	SIOUXSettings.asktosaveonclose = false;
 #endif
@@ -499,174 +708,35 @@ int main(int argc, char **argv)
 	worldYRange = Range(-1,1);
 	worldZRange = Range(-0.5,0.5);*/
 
+	/******** Init block *********/
+
+	// Initialize WebGL context
+	EmscriptenWebGLContextAttributes attrs;
+	emscripten_webgl_init_context_attributes(&attrs);
+	attrs.majorVersion = 3;
+	attrs.minorVersion = 0;
+	EMSCRIPTEN_WEBGL_CONTEXT_HANDLE context = emscripten_webgl_create_context("#canvas", &attrs);
+	emscripten_webgl_make_context_current(context);
+	
+	// Add canvas resize listener
+	emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, resizeCanvas);
+	
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	/******** End Init  *********/
+	
+
+	
 	cout << "reading description...\n";
 	
-	extern FILE* yyin;
-	extern int yyparse();
-	
-	yyin = fopen(descriptionFile.c_str(),"r");
-	if(yyin == NULL)
-	{
-		cout << "Description file \"" << descriptionFile << "\" could not be opened.\n";
-		return 1;
-	}
-
-	curPosition.line = 1;
-	
-	volatile bool error = false;
-	try
-	{
-	  bool diagnostic=true;
-
-	  // Initialize WebGL context
-	  EmscriptenWebGLContextAttributes attrs;
-	  emscripten_webgl_init_context_attributes(&attrs);
-	  attrs.majorVersion = 3;
-	  attrs.minorVersion = 0;
-	  EMSCRIPTEN_WEBGL_CONTEXT_HANDLE context = emscripten_webgl_create_context("#canvas", &attrs);
-	  emscripten_webgl_make_context_current(context);
+	ShaderAndVerticesCreation();
 	  
-	  // Add canvas resize listener
-	  emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, 0, true, resizeCanvas);
-
-	  glEnable(GL_DEPTH_TEST);
-	  glEnable(GL_BLEND);
-	  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	  
-	  yyparse();
-	  PrintReferenceCountingStatistics();
-	  AutoreleasePool::FlushCurrentPool();
-	  PrintReferenceCountingStatistics();
-	  
-	  DetermineWorldSize();
-	  
-	  currentVar = definedRealVariables.begin();
-	  
-	  cout << "Entering main loop...\n";
-	  UpdateVisualObjects();
-	  int numV;
-	  numV=NumberOfVerticeElements();
-	  //state.numSolidVertices=NumberOfSolidVertices();
-	  //state.numTransparentVertices=NumberOfTransparentVertices();
-
-	  //std::vector<float > allVertices(numV);
-	  std::vector<float > allVertices;
-	    //float mySolidVertices[7*state.numSolidVertices];
-	    //float myTransparentVertices[7*state.numTransparentVertices];
-	    //float allVertices[numV];
-
-	  // std::cout << "Received number of vertices: " << numV << std::endl;	  
-	  
-	  AcquireVertices(allVertices,numV);
-	  if (diagnostic) {
-	    cout << "Some semi-transparent vertices: \n"<< std::endl;;
-	    for(int i=0;i<100;i++)
-	      {
-		cout << state.TransparentVertices[i] << ',' ;
-		if (!((i+1) % 7))
-		  cout << '\n';    
-	      }
-	    cout << "Next Array .. \n"<< std::endl;;
-	    cout << "Some solid vertices: \n"<< std::endl;;    
-	    for(int i=0;i<100;i++)
-	      {
-		cout << state.SolidVertices[i] << ',' ;
-		if (!((i+1) % 7))
-		  cout << '\n';    
-	      }
-	  }
-	  cout << "\nNumber of solid vertice elements: " << state.TransparentVertices.size() << ",\n";
-	  cout << "\nNumber of semi-transparent vertix elements: " << state.SolidVertices.size() << ",\n";
-
-	  state.numSolidVertices = state.SolidVertices.size() / 7;
-	  state.numTransparentVertices = state.TransparentVertices.size() / 7;
-
-	  
-	  Shader myShader(vertexShaderSource, fragmentShaderSource);
-
-	  // The order here is critically important for emscripten
-	  // The VAO glBindVertexArray has to happen before the binding of attribute and element buffers 
-	  // Create and bind Vertex Array Object for Solid Vertices
-	  glGenVertexArrays(1, &state.SolidVAO);
-	  glBindVertexArray(state.SolidVAO);
-	  
-	  // Create and bind Vertex Buffer Object
-	  glGenBuffers(1, &state.SolidVBO);
-	  
-	  glBindBuffer(GL_ARRAY_BUFFER, state.SolidVBO);    
-	  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * state.SolidVertices.size(), &state.SolidVertices[0], GL_STATIC_DRAW);
-	  
-	  // position attribute
-	  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
-	  glEnableVertexAttribArray(0);
-	  // color attribute
-	  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3* sizeof(float)));
-	  glEnableVertexAttribArray(1);
-	  // transperancy attribute
-	  glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6* sizeof(float)));
-	  glEnableVertexAttribArray(2);   
-	  
-	  // Create and bind Vertex Array Object for semi-transparent Vertices
-	  glGenVertexArrays(1, &state.TransparentVAO);
-	  glBindVertexArray(state.TransparentVAO);
-	  
-	  // Create and bind Vertex Buffer Object
-	  glGenBuffers(1, &state.TransparentVBO);
-    
-	  glBindBuffer(GL_ARRAY_BUFFER, state.TransparentVBO);    
-	  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * state.TransparentVertices.size(), &state.TransparentVertices.front(), GL_STATIC_DRAW);
-
-	  // position attribute
-	  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
-	  glEnableVertexAttribArray(0);
-	  // color attribute
-	  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3* sizeof(float)));
-	  glEnableVertexAttribArray(1);
-	  // transperancy attribute
-	  glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6* sizeof(float)));
-	  glEnableVertexAttribArray(2);   	  
-
-	  // create transformations
-	  state.model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
-	  state.view          = glm::mat4(1.0f);
-	  state.projection    = glm::mat4(1.0f);
-	  state.model = glm::rotate(state.model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	  state.view  = glm::translate(state.view, glm::vec3(0.0f, 0.0f, -3.0f));
-	  state.projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-	  
-    
-	  state.rotation = glm::mat4(1.0f);
-
-	  // Set rendering loop
-    
-	  state.shaderProgram = myShader.ID;
-
-	  std::cout << "Matrix: " << glm::to_string(state.rotation) << std::endl;
-
-	  
-	  // Place to insert emscripten loop?
-	  emscripten_set_main_loop(mainLoop, 0, true);
+	// Place to insert emscripten loop?
+	emscripten_set_main_loop(mainLoop, 0, true);
 
 		
-	}
-	catch(DescError& e)
-	{
-		cout << "********* ERROR ********\n";
-		cout << e.message << endl;
-		cout << "line " << e.pos.line << endl;
-		error = true;
-	}
-	catch(exception& e)
-	{
-		cout << "*********** EXCEPTION ***********\n";
-		cout << e.what() << endl;
-		error = true;
-	}
-	catch(...)
-	{
-		cout << "********* UNEXPECTED EXCEPTION ********\n";
-		error = true;
-	}
+	
 	PrintReferenceCountingStatistics();
 	ReleaseDescription();
 	PrintReferenceCountingStatistics();
@@ -681,3 +751,10 @@ int main(int argc, char **argv)
 	return 0;
 }
 
+// using namespace emscripten;
+
+// EMSCRIPTEN_BINDINGS(text_processor) {
+//     class_<TextProcessor>("TextProcessor")
+//         .constructor<>()
+//         .function("processText", &TextProcessor::processText);
+// }
