@@ -36,7 +36,7 @@
           background-color: #da190b;
       }
       #scripttag {
-	  display="none"
+          display="none"
       }
     </style>
 </head>
@@ -63,17 +63,17 @@
         
         moduleScript.onload = async () => {
             try {
-		// Hide the script statement that emcc expects for compilation
-		document.getElementById('scripttag').style.display = "none";
+                // Hide the script statement that emcc expects for compilation
+                document.getElementById('scripttag').style.display = "none";
                 // Initialize the module
                 const module = await Textcopy();
                 
                 // Create instance of TextProcessor
                 const processor = new module.TextProcessor();
 
-		// Popluate with example quegl instructions
-		document.getElementById('input').value = exampleText;
-		
+                // Popluate with example quegl instructions
+                document.getElementById('input').value = exampleText;
+                
                 // Add button click event listener
                 document.getElementById('processButton').addEventListener('click', function() {
                     const input = document.getElementById('input').value;
