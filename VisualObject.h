@@ -52,7 +52,15 @@ public:
 	
 	virtual void	SubmitToBSP();
 	virtual void	OutputPOV(ostream& out);
-
+	virtual void	OutputVertices(ostream& out);
+	virtual void	OutputSolidVertices(ostream& out);
+	virtual	void	GetVertices(std::vector<float> &Vertices, int size);
+  //	virtual void    GetVerticesByTransparency(float *SolidVertices, float *TransparentVertices, int SVsize, int TVsize);
+	virtual int     CountVertices();
+	virtual int     CountSolidVertices();
+	virtual int     CountTransparentVertices();
+  
+  
 	static BSPTree	*BSP;
 	static MaterialUpdater	*BSPMaterialUpdater;
 
@@ -61,6 +69,6 @@ public:
 	virtual bool	GetRecommendedBSPResolution(vecN3& res);
 	
 	virtual void	UpdateMaterials();
-};
+}; 
 
 #endif

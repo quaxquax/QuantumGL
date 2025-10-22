@@ -1,4 +1,4 @@
-#include <OpenGL/gl.h>
+//#include <OpenGL/gl.h>
 #include "IsoSurface.h"
 #include "CubeInfo.h"
 #include "CubeEdges.h"
@@ -43,9 +43,9 @@ IsoSurface::~IsoSurface()
 		thresholdExpr->DecRefCount();
 	if(displayListIndex != -1)
 	{
-		LockGL();
-		glDeleteLists(displayListIndex,1);
-		UnlockGL();
+		// LockGL();
+		// glDeleteLists(displayListIndex,1);
+		// UnlockGL();
 	}
 }
 
@@ -420,43 +420,43 @@ void IsoSurface::Draw(GLfloat camera[3], GLfloat light[3])
 		return;
 	if(displayListIndex == -1)
 	{
-		displayListIndex = glGenLists(1);	
+	  //		displayListIndex = glGenLists(1);	
 		displayListDirty = true;
 	}
 	if(displayListDirty)
 	{
 		displayListDirty = false;
 		
-		glNewList(displayListIndex,GL_COMPILE_AND_EXECUTE);
+		//glNewList(displayListIndex,GL_COMPILE_AND_EXECUTE);
 		
 			GLfloat mat_diffuse[] = { 1.0, 1.0, 0.0, /*0.5*/1 };
-			glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-			glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
-			SetupShininess();
+			// glLightModelf (GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+			// glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+			// SetupShininess();
 				
 		//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//	glEnable(GL_BLEND);
-			glEnable(GL_COLOR_MATERIAL);
+		//	glEnable(GL_COLOR_MATERIAL);
 		//	glColor3f(1,0,0);
-			glEnable(GL_LIGHTING);
+			// glEnable(GL_LIGHTING);
 			
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glEnableClientState(GL_COLOR_ARRAY);
-			glEnableClientState(GL_VERTEX_ARRAY);
+			// glEnableClientState(GL_NORMAL_ARRAY);
+			// glEnableClientState(GL_COLOR_ARRAY);
+			// glEnableClientState(GL_VERTEX_ARRAY);
 		
-			glNormalPointer(GL_FLOAT,0,theNormals.x);
-			glColorPointer(3,GL_FLOAT,0,theColors.x);
-			glVertexPointer(3,GL_FLOAT,0,theVertices.x);
+			// glNormalPointer(GL_FLOAT,0,theNormals.x);
+			// glColorPointer(3,GL_FLOAT,0,theColors.x);
+			// glVertexPointer(3,GL_FLOAT,0,theVertices.x);
 		
-			glDrawElements(GL_TRIANGLES, theIndices.n, 
-						GL_UNSIGNED_INT, theIndices.x);
+			// glDrawElements(GL_TRIANGLES, theIndices.n, 
+			// 			GL_UNSIGNED_INT, theIndices.x);
 			
-			glDisableClientState(GL_NORMAL_ARRAY);
-			glDisableClientState(GL_VERTEX_ARRAY);
+			// glDisableClientState(GL_NORMAL_ARRAY);
+			// glDisableClientState(GL_VERTEX_ARRAY);
 				
-			glDisable(GL_LIGHTING);
+			// glDisable(GL_LIGHTING);
 
-			glDisable(GL_BLEND);
+			// glDisable(GL_BLEND);
 			
 			/*glPointSize(10.0);
 			glBegin(GL_POINTS);
@@ -477,11 +477,11 @@ void IsoSurface::Draw(GLfloat camera[3], GLfloat light[3])
 			}
 			glEnd();*/
 
-		glEndList();
+			//	glEndList();
 	}
 	else
 	{
-		glCallList(displayListIndex);
+	  //glCallList(displayListIndex);
 	}
 #endif
 }
@@ -546,11 +546,155 @@ void IsoSurface::SubmitToBSP()
 	cout << (theIndices.n/3) << "/" << (theIndices.n/3) << endl;
 }
 
+static void outArrVec(ostream& out,vecR3 vec)
+{
+  out << vec.x << ',' << vec.y << ',' << vec.z << ',';
+}
+static void getVecVal(std::vector<float> &arr, vecR3 vec)
+{
+  std::vector<float >  myVec={vec.x,vec.y,vec.z};
+  copy(myVec.begin(), myVec.end(), back_inserter(arr));
+}
+
 static void outPOVVec(ostream& out,vecR3 vec)
 {
 	out << '<' << vec.x << ',' << vec.y << ',' << vec.z << '>';
 }
 
+void IsoSurface::OutputVertices(ostream& out)
+{
+	number trans;
+	if(transparencyExpr)
+		transparencyExpr->EvaluateReal(1,&trans);
+	else
+		trans = 0;
+
+	float alpha = 1-trans;
+	
+	for(int i=0;i<theIndices.n;i+=3)
+	{
+		int idx1 = theIndices.x[i];
+		int idx2 = theIndices.x[i+1];
+		int idx3 = theIndices.x[i+2];
+
+		outArrVec(out,theVertices.x[idx1]); 
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";
+		outArrVec(out,theVertices.x[idx2]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";		
+		outArrVec(out,theVertices.x[idx3]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+		    << theColors.x[idx1].z << ',' << alpha << ",\n";
+	}
+}
+ 
+void IsoSurface::OutputSolidVertices(ostream& out)
+{
+	number trans;
+	if(transparencyExpr)
+		return;
+	else
+		trans = 0;
+
+	float alpha = 1-trans;
+	
+	for(int i=0;i<theIndices.n;i+=3)
+	{
+	  
+		int idx1 = theIndices.x[i];
+		int idx2 = theIndices.x[i+1];
+		int idx3 = theIndices.x[i+2];
+
+		outArrVec(out,theVertices.x[idx1]); 
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";
+		outArrVec(out,theVertices.x[idx2]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+			<< theColors.x[idx1].z << ',' << alpha << ",\n";		
+		outArrVec(out,theVertices.x[idx3]);
+		out << theColors.x[idx1].x << ',' << theColors.x[idx1].y << ',' 
+		    << theColors.x[idx1].z << ',' << alpha << ",\n";
+	}
+}
+void IsoSurface::GetVertices(std::vector<float> &arr, int size)
+{
+  //cout << "Array size to populate: " << size <<",\n";
+  //cout << "theIndices.n: " << theIndices.n << "\n";
+
+  number trans;
+  if(transparencyExpr)
+    transparencyExpr->EvaluateReal(1,&trans);
+  else
+    trans = 0;
+  float alpha = 1-trans;
+
+  // Populating array logic
+  for(int i=0;i<theIndices.n;i+=3)
+    {
+      bool diagnostic=false;
+      // if (i+10>theIndices.n) 
+      // 	diagnostic=true;
+      // else
+      // 	diagnostic=false;
+      
+      // Temp vector for vertice values of one triangle (with same color).
+      std::vector<float > myV;
+
+      int idx1 = theIndices.x[i];
+      int idx2 = theIndices.x[i+1];
+      int idx3 = theIndices.x[i+2];
+
+      //Getting the vertices for one triangle
+      getVecVal(myV,theVertices.x[idx1]);
+      getVecVal(myV,theColors.x[idx1]);
+      myV.push_back(alpha);
+
+      getVecVal(myV,theVertices.x[idx2]);
+      getVecVal(myV,theColors.x[idx1]);
+      myV.push_back(alpha);
+
+      getVecVal(myV,theVertices.x[idx3]);
+      getVecVal(myV,theColors.x[idx1]);
+      myV.push_back(alpha);
+
+      if (diagnostic) {
+	cout << "Trig " << i << " :,\n";
+	for (int j = 0; j < 21; j++){
+	  cout << myV[j] << ',' ;
+	  if (!((j+1) % 7))
+	    cout << '\n';
+	}
+	cout << "\n********** Trig done. ********" << ",\n";
+	if (i==99)
+	  break;
+      }
+      //Populating the array that was given to us via reference
+      copy(myV.begin(), myV.end(), back_inserter(arr));
+    }
+}
+int IsoSurface::CountVertices()
+{
+   return 7*theIndices.n; 
+}
+int IsoSurface::CountSolidVertices()
+{
+  if(transparencyExpr)
+    return 0;
+  int vCount=0;
+   for(int i=0;i<theIndices.n;i+=3)
+    vCount++;
+   return 3*vCount; 
+}
+int IsoSurface::CountTransparentVertices()
+{
+  if(!transparencyExpr)
+    return 0;
+  int vCount=0;
+   for(int i=0;i<theIndices.n;i+=3)
+    vCount++;
+   return 3*vCount; 
+}
 void IsoSurface::OutputPOV(ostream& out)
 {
 	number trans;

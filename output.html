@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OpenGL Legacy Example</title>
+    <style>
+        canvas {
+            display: block;
+            margin: auto;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <script>
+        var Module = {
+            canvas: document.getElementById('canvas'),
+            onRuntimeInitialized: function () {
+                console.log("Emscripten runtime initialized.");
+                // Start your program after the runtime is fully loaded
+                Module._main();
+            }
+        };
+    </script>
+    <script src="output.js"></script>
+</body>
+</html>
+  

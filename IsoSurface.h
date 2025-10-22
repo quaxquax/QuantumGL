@@ -71,9 +71,16 @@ public:
 	
 	void	Build();
 	void	SetGLObjectsDirty();
-
+ 
 	void	SubmitToBSP();
 	void	OutputPOV(ostream& out);
+	void	OutputVertices(ostream& out);
+	void	OutputSolidVertices(ostream& out);
+	void	GetVertices(std::vector<float> &Vertices, int size);
+  //	void    GetVerticesByTransparency(float *SolidVertices, float *TransparentVertices, int SVsize, int TVsize);
+	int     CountVertices();  
+	int     CountSolidVertices();
+	int     CountTransparentVertices();
 	
 	/*RealVariableWatcher	*GetDataFunctionWatcher()
 			{	return &dataFunctionWatcher;	}*/
